@@ -1,5 +1,5 @@
-const userController = require('../controllers/users')
-const plantController = require('../controllers/tracking')
+const userController = require('../controllers/userController')
+const plantController = require('../controllers/trackingController')
 const router = require('express').Router()
 
 

@@ -15,15 +15,14 @@ async function mongoConnect(callback) {
     await client.connect()
     .then (client => {
         console.log("Pinged your deployment. You successfully connected to MongoDB!");
-        _db = client.db()
+        _db = client.db('GreenNest')
     }).catch(err => {
         console.log(err)
     })
-  } finally {
-    // Ensures that the client will close when you finish/error
-    await client.close();
-  }
-}
+  }   catch (err) {
+    console.error("Database connection error:", err);
+    throw err;
+}}
 
 const getDb = () => {
     if (_db) {

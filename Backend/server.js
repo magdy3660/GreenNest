@@ -7,6 +7,8 @@ const { mongoConnect } = require('./util/database')
 // ROUTES ===================================================++++
 const appRoutes = require('./routes/appRoutes')
 const UserRoutes = require('./routes/userRoutes')
+server.use(express.json());
+
 server.use('/',appRoutes)
 server.use('/user',UserRoutes)
 // PARSER
@@ -18,7 +20,7 @@ server.use(errorController.get404)
 
 mongoConnect().then(() => {
     server.listen(4000, () => {
-        console.log("Backend server running on localhost:3000");
+        console.log("Backend server running on localhost:4000");
     })
   })
   .catch(err => {
