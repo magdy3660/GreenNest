@@ -1,6 +1,5 @@
-![image](https://github.com/user-attachments/assets/47688dcb-8d9c-4166-b0ee-ead49e19361c)# 🌿 GreenNest - AI-Powered Plant Disease Detection
-
-
+# 🌿 GreenNest - AI-Powered Plant Disease Detection
+![image](https://github.com/user-attachments/assets/47688dcb-8d9c-4166-b0ee-ead49e19361c)
 
 GreenNest is an intelligent plant care system that helps users identify plant diseases and provides treatment recommendations using artificial intelligence. Our solution makes plant healthcare accessible to everyone, from home gardeners to agricultural professionals.
 
