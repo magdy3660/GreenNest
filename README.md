@@ -74,15 +74,19 @@ Open a Pull Request
 👥 Team
 
  - AI/ML Engineer
-[magdy3660](https://github.com/magdy3660)- Backend Developer
+ - [magdy3660](https://github.com/magdy3660) Backend Developer
  - Frontend Developer
  - UI/UX Designer
 
 📜 License
 This project is licensed under the MIT License - see the LICENSE file for details.
+
+
 🙏 Acknowledgments
+
 FA institute
+
 Dr. Manal Ahmed
 
 <p align="center">Made with 💚 by Team GreenNest</p>
-```
+
