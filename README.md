@@ -1,5 +1,4 @@
 ![image](https://github.com/user-attachments/assets/47688dcb-8d9c-4166-b0ee-ead49e19361c)# 🌿 GreenNest - AI-Powered Plant Disease Detection
-![image](https://github.com/user-attachments/assets/9fc9689f-4fa2-4991-9459-eb5833351fbd)
 
 
 
