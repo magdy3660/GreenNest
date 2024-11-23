@@ -20,7 +20,7 @@ GreenNest is an intelligent plant care system that helps users identify plant di
 - Node.js v16 or higher
 - Python 3.8+
 - TensorFlow 2.x
-- PostgreSQL
+-  MongoDB
 
 ### Installation
 ```
