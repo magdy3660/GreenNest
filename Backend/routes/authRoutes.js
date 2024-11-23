@@ -1,23 +1,15 @@
-const userController = require('../controllers/userController')
+const authController = require('../controllers/authController')
 const plantController = require('../controllers/trackingController')
 const router = require('express').Router()
+const {auth}= require('../middleware/auth')
 
 
 
-
-// router.get('/register', userController.getRegister)
-// router.post('/settings', userController.postSettings)
-router.get('/login', userController.getLogin)
-router.post('/login', userController.postLogin)
-router.get('/dashboard', userController.getDashboard)
-
+router.post('/login', authController.login)
+router.get('/dashboard', authController.getDashboard)
+router.post('/register', authController.register)
 // Authenticated routes 
-router.get('/history', userController.getHistory)
-
-router.get('/profile', (req, res) => res.send('<h1>PROFILE page</h1>'))
-
-// When you click on a plant from tracked plants
-// // router.get('/settings', userController.getSettings)
+router.get('/history', authController.getHistory)
 
 // router.post('/profile', userController.updateProfile)
 

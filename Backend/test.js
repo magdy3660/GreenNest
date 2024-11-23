@@ -17,4 +17,34 @@ const testScan = async () => {
     }
 }
 
-testScan();
+const testRegister = async () => {
+    try {
+    const response = await axios.post('http://localhost:4000/api/register', {
+       
+        email: 'your  email here',
+        password: 'your pass',
+         name: 'john doe'
+    })
+        console.log(response.data.message)
+
+    }
+    catch (err) {
+        console.log(err.response?.data || err.message)
+    }
+}
+const testLogin = async () => {
+    try {
+    const response = await axios.post('http://localhost:4000/api/login', {
+       
+        email:'your email here',
+        password: 'your password here',
+       
+    })
+        console.log(response.data.message)
+
+    }
+    catch (err) {
+        console.log(err.response?.data || err.message)
+    }
+}
+testLogin()

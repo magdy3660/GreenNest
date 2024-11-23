@@ -1,5 +1,6 @@
 const jwt = require('jsonwebtoken');
 
+// Strict authentication middleware
 const auth = (req, res, next) => {
   try {
     const token = req.headers.authorization?.split(' ')[1];
@@ -16,4 +17,21 @@ const auth = (req, res, next) => {
   }
 };
 
-module.exports = auth;
+// Optional authentication middleware
+const authOptional = (req, res, next) => {
+  try {
+    const token = req.headers.authorization?.split(' ')[1];
+    
+    if (token) {
+      const decoded = jwt.verify(token, process.env.JWT_SECRET);
+      req.user = decoded;
+    }
+    
+    next();
+  } catch (error) {
+    // If token is invalid, continue as guest
+    next();
+  }
+};
+
+module.exports = { auth, authOptional };

@@ -24,4 +24,4 @@ static fetchAll() {
 
 }
 
-module.exports = History
+module.exports = Scan
