@@ -18,22 +18,51 @@ return (
 {/* ============================================================================================================================= */}
 {/* ============================================================================================================================= */}
 
-
+<span className={style.HideInNaturalState}>
 <button className="btn listSides " type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasExample" aria-controls="offcanvasExample">
 <FontAwesomeIcon className="fontAwsemList"  icon={faBars} />
 </button>
 
 <div className="offcanvas offcanvas-start" tabIndex={-1} id="offcanvasExample" aria-labelledby="offcanvasExampleLabel">
   <div className="offcanvas-header">
-    <h5 className="offcanvas-title" id="offcanvasExampleLabel">Offcanvas</h5>
+
+  <span className={style.IconTittle}>
+        <img src={imgIcon}/>
+    <h1 className="fontTiltle">GreenNest</h1>
+    </span>
+
     <button type="button" className="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
   </div>
   <div className="offcanvas-body">
    
+
+  <div className={style.ilnksContents
+}>
+<Link className={style.linkNavs} to={""}>Library</Link>
+<Link className={style.linkNavs} to={""}>Contact Us</Link>
+<Link className={style.linkNavs} to={""}>Account</Link>
+
+<div className="dropdown d-block">
+  <button className="btn secondbtnf  dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+    Company
+  </button>
+  <ul className="dropdown-menu ">
+    <li><a className="dropdown-item " href="#">Services</a></li>
+    <li><a className="dropdown-item" href="#">About Us</a></li>
+  </ul>
+</div>
+
+
+</div>
+
+{/* <div className={style.listdisplayBuuton}> */}
+    <button className={style.btnGetAppp}>Get The APP</button>
+
+
      
   </div>
 </div>
-
+</span>
 
 {/* =================================================================================================================================
 =========================================================================================================================== */}
@@ -46,16 +75,18 @@ return (
 <div className={style.ilnksContent
 }>
 <Link className={style.linkNav} to={""}>Library</Link>
-<Link className={style.linkNav} to={""}>Contact Us</Link>
-<Link className={style.linkNav} to={""}>Account</Link>
 
+
+<Link className={style.linkNav} to={""}>Contact Us</Link>
+
+<Link className={style.linkNav} to={""}>Account</Link>
 <div className="dropdown d-block">
   <button className="btn  dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-    Dropdown button
+    Company
   </button>
   <ul className="dropdown-menu ">
-    <li><a className="dropdown-item " href="#">Services</a></li>
-    <li><a className="dropdown-item" href="#">About Us</a></li>
+    <li><Link className="dropdown-item " to="#">Services</Link></li>
+    <li><Link className="dropdown-item" to="#">About Us</Link></li>
   </ul>
 </div>
 

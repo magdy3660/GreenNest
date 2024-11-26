@@ -37,6 +37,8 @@ outline: none;
     height: 100%;
     display: flex;
     align-items: center;
+    display: none;
+    
 }
 .fontAwsemList {
     font-size: 1.6em;
@@ -53,6 +55,36 @@ outline: none;
 
 }
 
-@media (max-width:460px) {
+@media (max-width:901px) {
+
+.listSides {display: flex;}
+
+
+}
+.offcanvas {
+    background-color: white; 
+    box-shadow: 10px 0 10px 5px rgba(110, 110, 110, 0.5); 
+    /* box-shadow: 10px 0 6px 10px rgba(127, 127, 127, 0.5);  */
+
+}
+
+.offcanvas-start {
+    width: 300px !important; 
+}
+@media (max-width:370px) {
+    .offcanvas-start {
+        width: 260px !important; 
+    }
+}
+.btn-close {
+    font-size: 1.1em !important;
+}
+
+.secondbtnf {
+    width: 100%;
     
+
+}
+.secondbtnf:hover {
+    background-color:rgb(143, 238, 143);
 }
