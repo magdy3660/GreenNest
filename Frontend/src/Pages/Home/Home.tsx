@@ -54,6 +54,25 @@ Feel free to customize the tone or details to better fit your project. Let me kn
 </section>
 
 
+<section className={styles.fourthSection}>
+
+
+<div className={styles.contentFourthSection}>
+
+<img src="../../../public/Images/farmersImages.webp" alt="the Farmer " />
+
+<div className={styles.aboutMan}> 
+<h3>This app provided excellent analysis and solutions for my plant diseases. I highly recommend it to anyone looking to improve their crop health!</h3>
+<p className="nameOffarmer">Juan Lopez</p>
+<p>Farmer, Mexico</p>
+</div>
+</div>
+
+
+
+
+
+</section>
 
 
         </>

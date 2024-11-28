@@ -244,8 +244,173 @@ border-radius: 12px;
     margin: auto;
     position: absolute;
 }
+@media (max-width:1250px) {
+    .thirdSection {
+        width: 50%;
+        margin: auto;
+        height: 500px;
+        display: flex;
+        flex-direction: row;
+        justify-content: space-around;
+        align-items: center;
+    
+       }
+    .oneImagesl {
+    width: 68%;
+    height: 80%;
+    border-radius: 12px;
+    
+    }
+    .twoImagesL {
+    width: 28%;
+    height: 80%;
+    border-radius: 12px;
+    }
+    .mopilePho {
+        height: 400px;
+        width: 220px;
+        margin: auto;
+        position: absolute;
+    }
+    
+}
+@media (max-width:517px) {
+    .mopilePho {
+        height: 250px;
+        width: 100;
+    }
+}
+.fourthSection {
+    height: 100vh;
+    width: 100%;
+    display: flex;
+    align-items: center;
+}
+.contentFourthSection {
+    width: 80%;
+    margin: auto;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    border-radius: 25px;
+    height: 400px;
+    background-color:rgb(192, 218, 235);
+}
+.contentFourthSection img {
+    height: 100%;
+    width: 50%;
+    border-radius: 25px 0 0 25px;
+}
+.aboutMan 
+{
+    width: 50%;
+    text-align: center;
+    padding: 0px 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+.aboutMan h3 {
+    font-size: 1.5em;
+    line-height: 40px;
+    font-family: sans-serif;
+    font-weight: 600;
+    color: rgb(68, 68, 68);
+}
+.aboutMan p:nth-child(3) {
+color: rgb(88, 88, 88);
+font-weight: 600;
+font-family: sans-serif;
+}
+@media (max-width:945px) {
+    .contentFourthSection {
+        width: 80%;
+        margin: auto;
+flex-direction: column;
+min-height: max-content;
+height: max-content;
+    }
+    .contentFourthSection img {
+        height:50%;
+        width: 100%;
+        border-radius: 25px 25px 0 0;
+    }
+    .aboutMan 
+    {
+        width: 80%;
+        text-align: center;
+        padding: 0px 20px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+    }
+    .aboutMan h3 {
+        font-size: 1.1em;
+        line-height: 40px;
+        font-family: sans-serif;
+        font-weight: 600;
+        color: rgb(68, 68, 68);
+    }
+    .aboutMan p:nth-child(3) {
+    color: rgb(88, 88, 88);
+    font-weight: 600;
+    font-family: sans-serif;
+    }
 
 
 
+}
+@media (max-width:514px) {
+    .aboutMan 
+    {
+        width: 95%;
+        text-align: center;
+        padding: 0px 20px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+    }
+    .aboutMan h3 {
+        font-size: 1.1em;
+        line-height: 40px;
+        font-family: sans-serif;
+        font-weight: 600;
+        color: rgb(68, 68, 68);
+    }
+    .aboutMan p:nth-child(3) {
+    color: rgb(88, 88, 88);
+    font-weight: 600;
+    font-family: sans-serif;
+    }
 
+}
+@media (max-width:400px) {
+    .aboutMan 
+    {
+        width: 100%;
+        text-align: center;
+        padding: 0px 20px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+    }
+    .aboutMan h3 {
+        font-size: 1.1em;
+        line-height: 40px;
+        font-family: sans-serif;
+        font-weight: 600;
+        color: rgb(68, 68, 68);
+    }
+    .aboutMan p:nth-child(3) {
+    color: rgb(88, 88, 88);
+    font-weight: 600;
+    font-family: sans-serif;
+    }
 
+}
+@media screen and (min-width:732px) and (max-width:941px) {
+    .aboutMan h3 {
+        font-size: 1.3em;
+    }
+}
