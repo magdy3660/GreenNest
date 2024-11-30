@@ -2,12 +2,15 @@ import styles from "./Home.module.css"
 import "./Home.css"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faMobileScreenButton , faCamera , faSeedling } from "@fortawesome/free-solid-svg-icons";
+import { useNavigate } from "react-router-dom";
 
 
 const Home = () => {
+const navicate = useNavigate();
 
-
-    
+    const GoAccount = () => {
+navicate("/account")
+    }
 
 
     return (
@@ -16,7 +19,7 @@ const Home = () => {
 
 <h1 className={styles.headOneMain}>Embark on a journey of discovery with your plants , nurture them with confidence and become part of an amazing experience with us</h1>
 
-<button className={styles.btnJoinUs}>
+<button onClick={GoAccount} className={styles.btnJoinUs}>
 Join our journey
 </button>
 
@@ -63,7 +66,7 @@ Feel free to customize the tone or details to better fit your project. Let me kn
 
 <div className={styles.aboutMan}> 
 <h3>This app provided excellent analysis and solutions for my plant diseases. I highly recommend it to anyone looking to improve their crop health!</h3>
-<p className="nameOffarmer">Juan Lopez</p>
+<p className="nameOffarmer">Mario Balotile</p>
 <p>Farmer, Mexico</p>
 </div>
 </div>

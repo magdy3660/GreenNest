@@ -3,9 +3,9 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min.js";
 import Home from "./Pages/Home/Home";
 import Root from "./Root";
-import UserProfile from "./Pages/Account/UserProfile/UserProfile";
-import SignIn from "./Pages/Account/SignIn/SignIn";
-import Register from "./Pages/Account/Register/Register";
+import InOrOutProfile from "./Pages/Account/InOrOutProfile/InOrOutProfile";
+import ChangeAboutsPage from "./Pages/About/ChangeAboutsPage";
+
 
 
 
@@ -16,11 +16,8 @@ function App() {
       <Routes>
         <Route path="/" element={<Root/>}>
         <Route path="/" element={ <Home/> } />
-        <Route path="/account" element={<UserProfile/>}>
-        <Route path="/account/signin" element={<SignIn/>}/>
-        <Route path="/account/createaccount" element={<Register/>}/> 
-        </Route>
-        
+        <Route path="/account" element={<InOrOutProfile/>} />
+        <Route path="/aboutus" element={<ChangeAboutsPage/>} />
         
         
         

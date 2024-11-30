@@ -21,6 +21,7 @@
     padding-right: 100px;
     align-items: center;
     box-shadow: 0px 1px 15px rgba(46, 46, 46, 0.25);
+    cursor: pointer;
 
   }
   .leftSide {
@@ -32,6 +33,7 @@
     display: flex;
     flex-direction: row;
     align-items: center;
+    cursor: pointer;
 }
 .IconTittle h1 {
     font-size: 1.5em;
@@ -48,6 +50,7 @@
     font-weight: 600;
     font-size: 1.1em;
     padding-left: 20px;
+    cursor: pointer;
 }
 .linkNav:hover {
     color: blue;
@@ -77,6 +80,7 @@
     font-size: 1em;
     padding: 8px 20px;
     border: 0;
+    cursor: pointer;
     outline: none;
 }
 @media (max-width:1184px) {

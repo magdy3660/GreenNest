@@ -1,0 +1,21 @@
+.oneabout {
+    height: 100vh;
+    margin-top: 100px;
+    background-color: rgb(244, 246, 241);
+
+}
+.navTop {
+    padding: 20px 20px;
+    display: flex;
+    align-items: center;
+    justify-content:flex-start;
+}
+.navTop button {
+    padding: 10px 15px;
+    border-radius: 8px;
+    font-weight: 700;
+    font-size: 1.1em;
+    border: 0;
+}
+.oneBtn {background-color: white; color:rgb(0, 0, 52); margin-right: 20px;}
+.twoBtn {background-color: blue; color: white;}

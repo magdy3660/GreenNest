@@ -1,13 +1,18 @@
 import style from "./Header.module.css"
 import "./Header.css"
 import imgIcon from "../../../public/icon.png"
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBars } from "@fortawesome/free-solid-svg-icons";
 
 
 
 function Header() {
+const navicate = useNavigate();
+
+function goHome()  {
+  navicate("/")
+}
 
 return (
 
@@ -26,7 +31,7 @@ return (
 <div className="offcanvas offcanvas-start" tabIndex={-1} id="offcanvasExample" aria-labelledby="offcanvasExampleLabel">
   <div className="offcanvas-header">
 
-  <span className={style.IconTittle}>
+  <span  onClick={goHome} className={style.IconTittle}>
         <img src={imgIcon}/>
     <h1 className="fontTiltle">GreenNest</h1>
     </span>
@@ -67,7 +72,7 @@ return (
 {/* =================================================================================================================================
 =========================================================================================================================== */}
 
-    <span className={style.IconTittle}>
+    <span  onClick={goHome} className={style.IconTittle}>
         <img src={imgIcon}/>
     <h1 className="fontTiltle">GreenNest</h1>
     </span>
