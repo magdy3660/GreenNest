@@ -46,14 +46,14 @@
 
 .linkNav {
     text-decoration: none;
-    color: rgb(66, 66, 66);
+    color: rgb(86, 86, 86);
     font-weight: 600;
     font-size: 1.1em;
     padding-left: 20px;
     cursor: pointer;
 }
 .linkNav:hover {
-    color: blue;
+    color: rgb(56, 56, 56);
 }
 .ilnksContent {
  display: flex;

@@ -1,7 +1,17 @@
+.bodyies {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: row;
+    background-color: rgb(244, 246, 241);
+    font-family: sans-serif;
+
+}
 .oneabout {
     height: 100vh;
     margin-top: 100px;
     background-color: rgb(244, 246, 241);
+    width: 75%;
 
 }
 .navTop {
@@ -19,3 +29,68 @@
 }
 .oneBtn {background-color: white; color:rgb(0, 0, 52); margin-right: 20px;}
 .twoBtn {background-color: blue; color: white;}
+
+
+.sideBar {
+    width: 20%;
+    background-color: rgb(244, 246, 241);
+    box-shadow: 5px 0 10px rgba(169, 169, 169, 0.2);
+    height: 100vh;
+   
+
+}
+.onelink {
+    color: rgb(145, 145, 145);
+    font-size: 1.1em;
+    text-decoration: none;
+    font-weight: 600;
+padding-bottom: 20px;
+transition: .5 ease;
+
+}
+.onelink:hover {color: rgb(46, 46, 46);}
+.twolink {
+    color: rgb(145, 145, 145);
+    font-size: 1.1em;
+    text-decoration: none;
+    font-weight: 600;
+padding-bottom: 20px;
+transition: .5 ease;
+
+
+}
+.twolink:hover {color: rgb(46, 46, 46);}
+
+.threelink {
+    color: rgb(145, 145, 145);
+    font-size: 1.1em;
+    text-decoration: none;
+    font-weight: 600;
+padding-bottom: 20px;
+transition: .5 ease;
+
+
+
+}
+
+.threelink:hover {color: rgb(46, 46, 46);}
+.fourlink {
+    color: rgb(145, 145, 145);
+    font-size: 1.1em;
+    text-decoration: none;
+    font-weight: 600;
+padding-bottom: 20px;
+transition: .5 ease;
+
+}
+
+.linksContentSide {
+    margin-top: 150px;
+    display: flex;
+    flex-direction: column;
+    color: rgb(112, 112, 112);
+width: 100%;
+padding-left: 30px;
+justify-content: space-between;
+
+}

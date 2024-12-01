@@ -44,8 +44,8 @@ return (
   <div className={style.ilnksContents
 }>
 <Link className={style.linkNavs} to={""}>Library</Link>
-<Link className={style.linkNavs} to={""}>Contact Us</Link>
-<Link className={style.linkNavs} to={""}>Account</Link>
+<Link className={style.linkNavs} to={"/contactus"}>Contact Us</Link>
+<Link className={style.linkNavs} to={"/account"}>Account</Link>
 
 <div className="dropdown d-block">
   <button className="btn secondbtnf  dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -53,7 +53,7 @@ return (
   </button>
   <ul className="dropdown-menu ">
     <li><a className="dropdown-item " href="#">Services</a></li>
-    <li><a className="dropdown-item" href="#">About Us</a></li>
+    <li><Link className="dropdown-item" to={"/aboutus"}>About Us</Link></li>
   </ul>
 </div>
 
@@ -82,16 +82,16 @@ return (
 <Link className={style.linkNav} to={""}>Library</Link>
 
 
-<Link className={style.linkNav} to={""}>Contact Us</Link>
+<Link className={style.linkNav} to={"/contactus"}>Contact Us</Link>
 
-<Link className={style.linkNav} to={""}>Account</Link>
+<Link className={style.linkNav} to={"/account"}>Account</Link>
 <div className="dropdown d-block">
   <button className="btn  dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
     Company
   </button>
   <ul className="dropdown-menu ">
     <li><Link className="dropdown-item " to="#">Services</Link></li>
-    <li><Link className="dropdown-item" to="#">About Us</Link></li>
+    <li><Link className="dropdown-item" to={"/aboutus"}>About Us</Link></li>
   </ul>
 </div>
 

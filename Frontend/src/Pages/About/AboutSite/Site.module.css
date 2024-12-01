@@ -43,34 +43,45 @@ height: 100%;
     text-decoration: none;
     font-weight: 600;
 padding-bottom: 20px;
-
+transition: .5 ease;
 
 }
+.onelink:hover {color: rgb(46, 46, 46);}
 .twolink {
     color: rgb(145, 145, 145);
     font-size: 1.1em;
     text-decoration: none;
     font-weight: 600;
 padding-bottom: 20px;
+transition: .5 ease;
+
 
 }
+.twolink:hover {color: rgb(46, 46, 46);}
+
 .threelink {
     color: rgb(145, 145, 145);
     font-size: 1.1em;
     text-decoration: none;
     font-weight: 600;
 padding-bottom: 20px;
+transition: .5 ease;
+
 
 
 }
+
+.threelink:hover {color: rgb(46, 46, 46);}
 .fourlink {
     color: rgb(145, 145, 145);
     font-size: 1.1em;
     text-decoration: none;
     font-weight: 600;
 padding-bottom: 20px;
+transition: .5 ease;
 
 }
+.fourlink:hover {color: rgb(46, 46, 46);}
 
 
 
@@ -110,10 +121,38 @@ padding-left: 50px;
     border-radius: 8px;
 }
 .whyi {font-weight: 700; font-size: 2.4em; padding-top: 30px; padding-bottom: 15px; padding-left: 20px;}
-.whyDetails , .secoWhyDeatails {
+.whyDetails , .secoWhyDeatails , .poi {
 font-weight: 600;
 font-size: 1.3em;
 color: rgb(111, 111, 111);
 padding-left: 50px ;
 padding-top: 10px;
+}
+.threeImagesAbo {
+    padding-left: 40px;
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+.threeImagesAbo img {
+    width: 270px;
+border-radius: 9px;
+}
+.btnGetAppAbou {
+margin: auto;
+    margin-top: 50px;
+    color: rgb(9, 0, 51);
+    font-weight: 600;
+    border: 0;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    text-align: center;
+    font-size: 1em;
+    padding: 8px 20px;
+background-color: rgb(244, 246, 241);
+text-decoration: underline;
 }

@@ -1,10 +1,13 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import style from "./Footer.module.css"
 import imgIcon from "../../../public/icon.png"
 import GooglePlayImage from "../../../public/Images/googlePlayImage.png"
 
 function Footer() {
-
+const navicate = useNavigate();
+const goHome = () => {
+    navicate("/")
+}
     return (
     
         <>
@@ -15,7 +18,7 @@ function Footer() {
 
 <span className={style.IconTittle}>
         <img src={imgIcon} alt=""/>
-    <h1 className={style.fontTiltle}>GreenNest</h1>
+    <h1 onClick={goHome} className={style.fontTiltle}>GreenNest</h1>
     </span>
 
 
@@ -23,13 +26,13 @@ function Footer() {
 
     <span className={style.oneRowLinksFooter}>
 <Link className={style.decorationnone} to={""}>Library</Link>
-<Link className={style.decorationnone} to={""}>About US</Link>
-<Link className={style.decorationnone} to={""}>Contact Us</Link>
+<Link className={style.decorationnone} to={"/account"}>About US</Link>
+<Link className={style.decorationnone} to={"/contactus"}>Contact Us</Link>
 </span>
 
 <span className={style.twoRowLinksFooter}>
 <Link className={style.decorationnone} to={""}>Services</Link>
-<Link className={style.decorationnone} to={""}>Account</Link>
+<Link className={style.decorationnone} to={"/account"}>Account</Link>
 </span>
 
 

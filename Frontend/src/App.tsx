@@ -5,6 +5,7 @@ import Home from "./Pages/Home/Home";
 import Root from "./Root";
 import InOrOutProfile from "./Pages/Account/InOrOutProfile/InOrOutProfile";
 import ChangeAboutsPage from "./Pages/About/ChangeAboutsPage";
+import ContactUs from "./Pages/ContactUs/ContactUs";
 
 
 
@@ -18,7 +19,7 @@ function App() {
         <Route path="/" element={ <Home/> } />
         <Route path="/account" element={<InOrOutProfile/>} />
         <Route path="/aboutus" element={<ChangeAboutsPage/>} />
-        
+        <Route path="/contactus" element={<ContactUs/>} />
         
         
 
