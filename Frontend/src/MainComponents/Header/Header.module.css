@@ -1,0 +1,177 @@
+@import url('https://fonts.googleapis.com/css2?family=Bungee+Spice&display=swap');
+.bungee-spice-regular {
+    font-family: "Bungee Spice", sans-serif;
+    font-weight: 400;
+    font-style: normal;
+  }
+  .leftSide img {
+    width: 70px;
+  }
+  nav {
+    width: 100%;
+    z-index: 999;
+    position: fixed;
+    background-color: white;
+    height: 100px;
+    top: 0;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    padding-left: 100px;
+    padding-right: 100px;
+    align-items: center;
+    box-shadow: 0px 1px 15px rgba(46, 46, 46, 0.25);
+    cursor: pointer;
+
+  }
+  .leftSide {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+  }
+.IconTittle {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    cursor: pointer;
+}
+.IconTittle h1 {
+    font-size: 1.5em;
+    font-weight: 640;
+    color:rgb(42, 42, 42);
+}
+.IconTittle img {
+    width: 60px;
+}
+
+.linkNav {
+    text-decoration: none;
+    color: rgb(86, 86, 86);
+    font-weight: 600;
+    font-size: 1.1em;
+    padding-left: 20px;
+    cursor: pointer;
+}
+.linkNav:hover {
+    color: rgb(56, 56, 56);
+}
+.ilnksContent {
+ display: flex;
+ flex-direction: row;
+ align-items: center;
+    gap: 20px;
+    padding-bottom: 10px;
+    padding-left: 50px;
+}
+.rightSide {
+    height: 100%;
+    display: flex;
+    align-items: center;
+}
+.btnGetApp {
+    background-color: rgb(0, 0, 198);
+    color: white;
+    font-weight: 600;
+    border: 0;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    text-align: center;
+    font-size: 1em;
+    padding: 8px 20px;
+    border: 0;
+    cursor: pointer;
+    outline: none;
+}
+@media (max-width:1184px) {
+    nav {
+        padding-left: 20px;
+        padding-right: 20px;
+    }
+}
+@media (max-width:975px) {
+    .linkNav {
+        font-weight: 700;
+        font-size: 1em;
+        padding-left: 10px;
+    }    
+}
+/* ==================================================================================================================================== */
+
+
+@media (max-width:901px) {
+    .ilnksContent {
+        display: none;
+    }
+
+}
+@media (max-width:481px) {
+    .IconTittle h1 {
+         font-size: 1.3em;
+     }
+     .IconTittle img {
+         width: 46px;
+     }
+     .btnGetApp {
+        color: white;
+        font-weight: 600;
+        border: 0;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        text-align: center;
+        font-size: .9em;
+        padding: 5px 12px;
+    }
+  }
+ @media (max-width:388px) {
+    .btnGetApp {display: none;}
+ }
+ .HideInNaturalState {
+    display: none;
+ }
+ @media (max-width:901px) {
+.HideInNaturalState {display: flex;} 
+}
+.ilnksContents {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    gap: 30px;
+    font-size: 1.3em;
+}
+.linkNavs {
+    width: 100%;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    color: rgb(66, 66, 66);
+    font-weight: 600;
+    font-size: 1.1em;
+    padding-left: 20px;
+    border-radius: 6px;
+}
+.linkNavs:hover {
+    background-color:rgb(143, 238, 143);
+
+}
+.btnGetAppp {
+    margin-top: 50px;
+    background-color: rgb(0, 0, 198);
+    color: white;
+    font-weight: 600;
+    border: 0;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    text-align: center;
+    font-size: 1em;
+    padding: 8px 20px;
+    display: none;
+}
+@media (max-width:388px) {
+.btnGetAppp {
+    display: flex;
+}
+}

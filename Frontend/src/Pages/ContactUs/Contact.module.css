@@ -1,0 +1,117 @@
+.sectionAll {
+    background-color: rgb(239, 242, 232);
+
+    width: 100%;
+    height: 100vh;
+    margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items:center ;
+}
+
+
+.formContact h1 {
+    font-weight: 600;
+    font-family: sans-serif;
+    color: black;
+    text-align: center;
+}
+
+
+.formContact {
+    width: 44%;
+    height: 400px;
+        background-color: rgba(128, 128, 128, 0.0); /* Black with 50% opacity */
+    margin: auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    border-radius: 6px;
+    padding: 20px 10px;
+}
+.formContact::before {
+    content: "";
+    background-color: rgba(9, 9, 9, 0.2); /* Black with 50% opacity */
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    top: 0;
+    left: 0;
+    z-index: -9; /* Puts the background behind the content */
+  }
+  .dears {width: 100%; padding: 20px 30px; text-align: center; color: black; font-family: sans-serif; font-weight: 700; font-size: 1.1em;}
+
+  .nameContact {
+width: 100%;
+display: flex;
+flex-direction: column;
+margin-bottom: 20px;
+
+  }
+  .emailContact {
+width: 100%;
+display: flex;
+flex-direction: column;
+margin-bottom: 20px;
+  }
+  .SuggestContact {
+width: 100%;
+display: flex;
+flex-direction: column;
+margin-bottom: 20px;
+  }
+  .btnContact {
+width: 100%;
+
+  }
+  label {
+    color: black;
+    font-weight: 600;
+    font-family: sans-serif;
+    font-size: 1.2em;
+  }
+  input {
+    height: 40px;
+    border-radius: 8px;
+    padding-left: 20px;
+    font-weight: 600;
+    outline: 0;
+    border: 0;
+  }
+
+  .textareasc {
+    border-radius: 8px;
+    padding-left: 20px;
+    font-weight: 600;
+    padding-top: 15px;
+    outline: 0;
+    border: 0;
+  }
+  .textareasc:active {
+    border: 2px solid black;
+  }
+  .textareasc:focus {
+    border: 2px solid black;
+  }
+  .btnContact button {
+    background-color: blue;
+    color: white;
+    border-radius: 9px;
+    font-weight: 600;
+    font-size: 1.3em;
+    width: 100%;
+    padding: 12px 0;
+    margin: auto;
+    border: 0;
+  }
+  @media (max-width:1051px) {
+    .formContact {
+        width: 70%;
+    }
+}
+@media (max-width:619px) {
+    .formContact {
+        width: 90%;
+    }
+}
