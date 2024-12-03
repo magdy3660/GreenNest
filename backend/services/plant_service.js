@@ -8,7 +8,7 @@ class PlantService {
         const uploadedImage = await uploadService.uploadFile(file);
         
         // 2. Process with AI detection
-        const analysis = await detectionService.analyzeImage(uploadedImage.path);
+        // const analysis = await detectionService.analyzeImage(uploadedImage.path);
         
         // 3. Create history entry
         const historyData = {
@@ -17,12 +17,12 @@ class PlantService {
                 image_name: file.originalname,
                 image_path: uploadedImage.path
             },
-            AiScanResults: [{
-                detected_disease: analysis.diagnosis,
-                confidence: analysis.confidence,
-                disease_info: analysis.analysis,
-                remediation_action: analysis.recommendations
-            }]
+            // AiScanResults: [{
+            //     detected_disease: analysis.diagnosis,
+            //     confidence: analysis.confidence,
+            //     disease_info: analysis.analysis,
+            //     remediation_action: analysis.recommendations
+            // }]
         };
 
         return await this.saveToHistory(historyData);
