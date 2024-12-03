@@ -84,12 +84,12 @@ exports.getDashboard = async (req, res) => {
 
 exports.getPlant = async (req, res) => {
     try {
-        const plant = await plant_service.getPLant(req.params.plantId, req.user._id)
+        const plant = await plant_service.getPlant(req.params.plantId, req.user._id)
 
 
         if (!plant) {
             console.log('Plant not found:', req.params.plantId);
-            return res.status(404).render('error', { message: 'Plant not found' });
+            return res.status(404).json({ message: "Plant not found" });
         }
         console.log('Plant found:', plant._id);
         res.status(200).json({
@@ -98,7 +98,7 @@ exports.getPlant = async (req, res) => {
         });
     } catch (error) {
         console.error('502 SERVER ERR at plant retrieval', error);
-        res.status(500).render('error', { message: 'Error loading plant details' });
+        res.status(500).json({ message: "Error loading plant details" });
     }
 }
 
