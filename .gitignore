@@ -1,2 +1,5 @@
-devbackend/env
-devbackend/node_modules
+backend/env
+backend/node_modules
+backend/_tests_
+backend/_test_
+backend/views

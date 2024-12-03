@@ -1,11 +1,8 @@
-const Plant = require('../models/plant');
-const Image = require('../models/image');
 const History = require('../models/history');
 const User = require('../models/user');
 const fs = require('fs');
 const path = require('path');
 const multer = require('multer');
-const auth = require('../middleware/auth');
 
 // Configure multer for file uploads
 const storage = multer.diskStorage({
@@ -68,9 +65,7 @@ const checkAuth = (req, res, next) => {
 // Get all plants for authenticated user
 exports.getPlants = [checkAuth, async (req, res) => {
     try {
-        const plants = await Plant.find({ user: req.user._id })
-            .populate('image')  // Populate the main image
-            .populate('history.image')  // Populate images in history
+        const plants = await history.find({ user: req.user._id })
             .sort({ lastUpdated: -1 });
         
         // Ensure all plants have valid images
@@ -308,50 +303,68 @@ exports.renderTrackPlantForm = [checkAuth, (req, res) => {
 }];
 
 // Render individual plant view
-exports.renderPlantView = [checkAuth, async (req, res) => {
+exports.getPlant = [checkAuth, async (req, res) => {
     try {
-        console.log('Rendering plant view for plant:', req.params.plantId);
-        const plant = await Plant.findOne({
+        const plant = await history.findOne({
             _id: req.params.plantId,
             user: req.user._id
-        }).populate(['image', 'history.image']);
+        })
 
         if (!plant) {
             console.log('Plant not found:', req.params.plantId);
             return res.status(404).render('error', { message: 'Plant not found' });
         }
-
         console.log('Plant found:', plant._id);
-        res.render('view-plant', { plant });
     } catch (error) {
-        console.error('Plant view render error:', error);
+        console.error('502 SERVER ERR at plant retrieval', error);
         res.status(500).render('error', { message: 'Error loading plant details' });
     }
 }];
 
-exports.getTrackingList = [checkAuth, async (req, res) => {
+exports.getHistory = [checkAuth, async (req, res) => {
     try {
-        console.log('Fetching tracking list for user:', req.user._id);
-        const user = await User.findById(req.user._id).select('-password');
-        if (!user) {
-            console.log('User not found:', req.user._id);
-            return res.status(404).json({ message: 'User not found' });
-        }
-            
-        const userPlants = await Plant.find({ user: user._id })
-            .populate('image')
-            .populate('history.image');
+        console.log('History list for user requested:', req.user._id);
+        
+        // Find all history entries for the user
+        const historyEntries = await History.find({ user: req.user._id })
+            .sort({ createdAt: -1 }); // Sort by newest first
+        
 
-        console.log(`Found ${userPlants.length} plants for user`);
+ // Debug logs
+ console.log('Type of historyEntries:', typeof historyEntries);
+ console.log('Is Array?', Array.isArray(historyEntries));
+ console.log('Length:', historyEntries.length);
+ if (historyEntries.length > 0) {
+     console.log('Sample entry:', JSON.stringify(historyEntries[0], null, 2));
+ }
+
+
+        if (historyEntries.length === 0) {
+            return res.status(404).json({
+                success: false,
+                message: 'No history found, Start by saving your first scan',
+                userId: req.user._id
+            });
+        }
+
+        console.log(`Found ${historyEntries.length} history entries for user`);
+        
+        // Return success response with user ID and history
         res.status(200).json({
-            user: user,
-            plants: userPlants
+            success: true,
+            userId: req.user._id,
+            history: historyEntries
         });
     } catch (error) {
-        console.error('Get tracking list error:', error);
-        res.status(500).json({ message: 'Error fetching Dashboard' });
+        console.error('Error fetching history:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Error fetching history',
+            userId: req.user._id
+        });
     }
 }];
+
 
 // Guest scan endpoint - no authentication required
 exports.guestScan = async (req, res) => {
