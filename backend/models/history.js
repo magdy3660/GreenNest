@@ -7,9 +7,9 @@ const historySchema = new mongoose.Schema({
         required: true
     },
     image_metadata: {
-        type: string,
-        image_nanme:string,
-        image_path:string,
+        type: String,
+        image_nanme:String,
+        image_path:String,
         required: true
     },
     AiScanResults: [{

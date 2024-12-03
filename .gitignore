@@ -1,7 +1,6 @@
 backend/env
 backend/.env
+backend/.VScode
+backend/.VScode
 backend/node_modules
-backend/_tests_
-backend/__tests__
-backend/views
 backend/uploads

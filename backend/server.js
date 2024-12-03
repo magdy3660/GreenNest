@@ -4,9 +4,7 @@ const server = express()
 const cors = require('cors');
 const path = require('path')
 const cookieParser = require('cookie-parser');
-const apiRoutes = require('./routes/apiRoutes');
-const authRoutes = require('./routes/authRoutes');
-const webRoutes = require('./routes/webRoutes');
+const routes = require('./routes/routes');
 
 // Middleware must come BEFORE routes
 server.use(express.json());
@@ -22,10 +20,7 @@ server.set('views', path.join(__dirname, 'views'));
 server.use('/uploads', express.static('uploads'));
 server.use(express.static(path.join(__dirname, 'public')));
 
-// Routes come AFTER middleware
-server.use('/auth', authRoutes);  // Auth routes first
-server.use('/api', apiRoutes);    // API routes second
-server.use('/', webRoutes);       // Web routes last (catch-all)
+server.use(routes)
 
 const { mongoConnect } = require('./util/database');
 
