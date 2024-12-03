@@ -45,15 +45,6 @@ exports.deleteScan = async (req, res) => {
     try {
         const plant = await plant_service.deleteScan(req.params.historyId, req.userId)
 
-        if (!plant) {
-            return res.status(404).json({ message: "Plant not found" });
-        }
-
-        fs.unlinkSync(plant.imageUrl);
-        await Plant.findByIdAndDelete(plant._id);
-
-        console.log('Deleted main image:', plant.imageUrl);
-
         res.status(200).json({
             success: true,
             message: 'Scan deleted successfully'
@@ -66,36 +57,34 @@ exports.deleteScan = async (req, res) => {
 
 exports.getDashboard = async (req, res) => {
     try {
-        console.log('Rendering dashboard for user:', req.user._id);
+        console.log('Getting dashboard for user:', req.user._id);
 
-        const history = await History.find({ user: req.user._id })
-            .populate({
-                select: 'name image _id'
-            })
-        console.log(`Found ${history.length}  entries for user`);
+        const histories = await plant_service.getAllPlant(req.user._id);
+        console.log(`Found ${histories.length} entries for user`);
+
+        // Map the array to get only the needed fields
+        const formattedHistories = histories.map(history => ({
+            id: history._id,
+            name: history.name,
+            image: history.image
+        }));
+
         res.status(200).json({
-            message: 'dashboard loaded',
-            history: {
-                id: history._id,
-                name: history.name,
-                image: history.image
-            },
+            success: true,
+            message: 'Dashboard loaded',
+            histories: formattedHistories,
             user: req.user
         });
-
     } catch (error) {
-        console.error('Error rendering dashboard:', error);
-        res.status(500).json({
-            message: 'Error loading dashboard: ' + error.message,
-            user: req.user
-        });
+        console.error('Dashboard error:', error);
+        res.status(500).json({ message: "Error loading dashboard" });
     }
 }
 
 
 exports.getPlant = async (req, res) => {
     try {
-        const plant = await plant_service.getHistoryById(req.params.plantId, req.user._id)
+        const plant = await plant_service.getPLant(req.params.plantId, req.user._id)
 
 
         if (!plant) {

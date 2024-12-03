@@ -35,7 +35,7 @@ class PlantService {
     }
 
     async getPlant(PlantId, userId) {
-        return await Plant.findOne({ _id: PlantId, user: userId });
+        return await History.findOne({ _id: PlantId, user: userId });
     }
 
     async saveToHistory(PlantData) {
