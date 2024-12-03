@@ -1,38 +1,21 @@
 const mongoose = require('mongoose');
 
 const plantSchema = new mongoose.Schema({
-    user: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'User',
-        required: true
-    },
-    plantName: {
+
+    plant_name: {
         type: String,
         required: true
     },
-    plantType: {
-        type: String,
-        required: true
-    },
-    image: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Image',
-        required: true
-    },
-    status: String,
-    notes: String,
-    aiAnalysis: {
-        diagnosis: String,
-        confidence: Number,
+
+    plant_images: [{
+        image:{
+            type:String,
+            required:true
+    }
+    }],
+    plant_health_issues: {
+        common_diseases: [String],
         recommendations: [String]
-    },
-    history: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'History'
-    },
-    trackStartDate: {
-        type: Date,
-        default: Date.now
     },
     lastUpdated: {
         type: Date,

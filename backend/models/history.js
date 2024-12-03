@@ -6,26 +6,37 @@ const historySchema = new mongoose.Schema({
         ref: 'User',
         required: true
     },
-    plant: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Plant',
+    image_metadata: {
+        type: string,
+        image_nanme:string,
+        image_path:string,
         required: true
     },
-    confidence: {
-        type: Number,
-        min: 0,
-        max: 100
-    },
-    status: String,
-    image: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Image',
-        required: true
-    },
-    createdAt: {
-        type: Date,
-        default: Date.now
+    AiScanResults: [{
+        detected_disease: {
+            type: String,
+            required: true,
+        },
+        confidence: {
+            type: Number,
+            min: 0,
+            max: 100,
+            required: true
+        },
+        disease_info: {
+            type: String,
+            required: false
+        },
+        remediation_action: {
+            type: String,
+            required: true,
+        },
+        diagnosisDate:{
+        type: String,
+        required: true,
     }
+
+    }],
 });
 
 // Add index for faster queries
