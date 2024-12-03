@@ -2,6 +2,6 @@ backend/env
 backend/.env
 backend/node_modules
 backend/_tests_
-backend/_test_
+backend/__tests__
 backend/views
 backend/uploads
