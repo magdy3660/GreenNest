@@ -8,11 +8,17 @@ const historySchema = new mongoose.Schema({
     },
     image_metadata: {
         type: String,
-        image_nanme:String,
-        image_path:String,
-        required: true
+        image_name:{
+            type: String,
+            required: true
+        },
+        image_path:{
+            type: String,
+            required: true
+        },
     },
     AiScanResults: [{
+        simillar_images: [String],
         detected_disease: {
             type: String,
             required: true,

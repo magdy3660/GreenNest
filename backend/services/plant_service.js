@@ -44,8 +44,19 @@ class PlantService {
     }
 
     async deleteScan(historyId, userId) {
+        const history = await History.findOne({ _id: historyId, user: userId });
+    
+        if (!history) {
+            return null;
+        }
+    
+        // 2. Delete the file using storage service
+        if (history.image_metadata && history.image_metadata.image_path) {
+            await storageService.deleteFile(history.image_metadata.image_path);
+        }
+    
+        // 3. Delete the database record
         return await History.findOneAndDelete({ _id: historyId, user: userId });
     }
 }
-
 module.exports = new PlantService();

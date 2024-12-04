@@ -44,4 +44,4 @@ const upload = multer({
 });
 
 // Export the middleware
-exports.uploadMiddleware = upload.single('plantImage');
+module.exports = upload.single('plantImage');

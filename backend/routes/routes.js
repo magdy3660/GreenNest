@@ -25,7 +25,7 @@ router.post('/api/v1/users/:userId/logout', authController.logout);
 
 // Detection Routes  (all protected)
 router.post('/api/v1/users/:userId/upload', uploadMiddleware, plantController.scanPlant);
-router.get('/api/v1/users/:userId/dashboard', plantController.getHistory);
+router.get('/api/v1/users/:userId/dashboard', plantController.getDashboard);
 router.delete('/api/v1/users/:userId/plants/:historyId', plantController.deleteScan);
 
 // 404 handler
