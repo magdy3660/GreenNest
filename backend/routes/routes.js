@@ -2,6 +2,7 @@ const plantController = require('../controllers/plantController');
 const authController = require('../controllers/authController');
 const router = require('express').Router();
 const auth = require('../middlewares/auth');
+const uploadMiddleware = require('../middlewares/upload');
 
 // Public routes 
 router.post('/api/v1/register', authController.register);  
@@ -23,7 +24,7 @@ router.use('/api/v1/users', auth); // Protect all user routes
 router.post('/api/v1/users/:userId/logout', authController.logout);  
 
 // Detection Routes  (all protected)
-router.post('/api/v1/users/:userId/upload', plantController.uploadMiddleware, plantController.scanPlant);
+router.post('/api/v1/users/:userId/upload', uploadMiddleware, plantController.scanPlant);
 router.get('/api/v1/users/:userId/history', plantController.getHistory);
 // router.delete('/api/v1/users/:userId/history/:historyId', plantController.deleteHistoryEntry);
 

@@ -1,11 +1,11 @@
 const History = require('../models/history');
-const uploadService = require('./upload_service');
+const storageService = require('./storage_service');
 const detectionService = require('./detection_service');
 class PlantService {
 
     async scanPlant(file, userId) {
         // 1. Handle file upload
-        const uploadedImage = await uploadService.uploadFile(file);
+        const uploadedImage = await storageService.uploadFile(file);
         
         // 2. Process with AI detection
         // const analysis = await detectionService.analyzeImage(uploadedImage.path);
