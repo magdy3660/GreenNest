@@ -1,7 +1,7 @@
 const User = require('../models/user');
 const jwt = require('jsonwebtoken');
 const { sendVerificationEmail, sendPasswordResetEmail } = require('../services/email_service');
-const  generateToken  = require('../services/jwt_service');
+const { generateToken, verifyEmailToken, verifyResetToken, resetUserPassword, comparePassword } = require('../services/jwt_service');
 
 exports.register = async (req, res) => {
     try {
@@ -25,16 +25,17 @@ exports.register = async (req, res) => {
                 message: 'Registration failed: User Already Exists',
             });
         }
-        
+        const hashedPassword = await hashPassword(password);
+
         // create new user
         const user = new User({
             email,
-            password,
+            password: hashedPassword,
             name
         });
 
         // Generate verification token
-        const verificationToken = user.generateEmailVerificationToken();
+        const verificationToken = generateToken(user)
         await user.save();
 
         // Send verification email
@@ -74,11 +75,7 @@ exports.verifyEmail = async (req, res) => {
     try {
         const { token } = req.query;
         
-        const user = await User.findOne({
-            emailVerificationToken: token,
-            emailVerificationExpires: { $gt: Date.now() }
-        });
-
+        const user = await verifyEmailToken(token);
         if (!user) {
             return res.status(400).json({
                 success: false,
@@ -128,7 +125,7 @@ exports.login = async (req, res) => {
             });
         }
 
-        const isMatch = await user.comparePassword(password);
+        const isMatch = await comparePassword(password, user.password);
         if (!isMatch) {
             return res.status(401).json({ 
                 success: false,
@@ -221,8 +218,9 @@ exports.getResetPasswordToken = async (req, res) => {
 };
 exports.resetPassword = async (req, res) => {
     try {
-        const { token, newPassword } = req.body;
-        const user = await User.findOne({ email, resetPasswordToken: token, resetPasswordExpires: { $gt: Date.now() } });
+        const { token, newPassword, email } = req.body;
+        
+        const user = await verifyResetToken(token, email);
         if (!user) {
             return res.status(400).json({
                 success: false,
@@ -230,21 +228,16 @@ exports.resetPassword = async (req, res) => {
             });
         }
    
-        // Update user password and clear reset token
-        user.password = newPassword;
-        user.resetPasswordToken = undefined;
-        user.resetPasswordExpires = undefined;
-        await user.save();
-
-        sendResetLog(user.email)
+        await resetUserPassword(user, newPassword);
+        sendResetLog(user.email);
       
-          res.status(200).json({ 
+        res.status(200).json({ 
             message: 'Password reset successful' 
-          });
-        } catch (error) {
-          res.status(500).json({ 
+        });
+    } catch (error) {
+        res.status(500).json({ 
             message: 'Error resetting password', 
             error: error.message 
-          });
-        }
-      };
+        });
+    }
+};

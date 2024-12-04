@@ -1,6 +1,5 @@
-const fs = require('fs');
-const path = require('path');
 const multer = require('multer');
+const path = require('path');
 
 // Define allowed image types
 const MIME_TYPES = {
@@ -12,7 +11,6 @@ const MIME_TYPES = {
 // File filter function
 const fileFilter = (req, file, cb) => {
     const allowedTypes = Object.keys(MIME_TYPES);
-    
     if (!allowedTypes.includes(file.mimetype)) {
         const error = new Error('Invalid file type. Only JPG and PNG images are allowed');
         error.code = 'INVALID_FILE_TYPE';
@@ -33,7 +31,7 @@ const storage = multer.diskStorage({
     }
 });
 
-// Configure upload with limits
+// Configure multer
 const upload = multer({
     storage: storage,
     fileFilter: fileFilter,
@@ -43,5 +41,4 @@ const upload = multer({
     }
 });
 
-// Export the middleware
 module.exports = upload.single('plantImage');

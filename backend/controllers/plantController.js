@@ -1,7 +1,7 @@
 const History = require('../models/history');
 const User = require('../models/user');
 const plant_service = require('../services/plant_service');
-
+const storage_service = require('../services/storage_service');
 
 // Get all plants for authenticated user
 exports.getPlants = async (req, res) => {
@@ -43,11 +43,11 @@ exports.getPlant = async (req, res) => {
 // Delete a scan
 exports.deleteScan = async (req, res) => {
     try {
-        const plant = await plant_service.deleteScan(req.params.historyId, req.userId)
+        const plant = await plant_service.deleteScan(req.params.plantId, req.userId)
 
         res.status(200).json({
             success: true,
-            message: 'Scan deleted successfully'
+            message: 'Scan deleted successfully' + plant.name
         });
     } catch (error) {
         console.error('Delete plant error:', error);
@@ -99,29 +99,5 @@ exports.getPlant = async (req, res) => {
     } catch (error) {
         console.error('502 SERVER ERR at plant retrieval', error);
         res.status(500).json({ message: "Error loading plant details" });
-    }
-}
-
-
-// Handle plant scan submission
-exports.scanPlant = async (req, res) => {
-    try {
-        if (!req.file) {
-            return res.status(400).json({ message: 'No image file uploaded' });
-        }
-        const scanResults = plant_service.scanPlant(req.file, req.user._id);
-        if (!scanData) {
-            return res.status(500).json({
-                message: 'Error processing plant scan'
-            })
-        }
-        res.status(200).json({
-            message: 'Plant scanned successfully',
-            scanResults
-        });
-
-    } catch (error) {
-        console.error('Error in scanPlant:', error);
-        res.status(500).json({ message: 'Error processing plant scan: ' + error.message });
     }
 }

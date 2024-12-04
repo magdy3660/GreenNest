@@ -1,27 +1,32 @@
 const fs = require('fs');
+const plant_service = require('./plant_service');
+// Ensure upload directory exists
+const ensureUploadDir = () => {
+    const uploadDir = 'uploads/';
+    if (!fs.existsSync(uploadDir)) {
+        fs.mkdirSync(uploadDir, { recursive: true });
+    }
+};
 
-// Add a function to handle file uploads
-exports.uploadFile = async (file) => {
+// File metadata handling
+const storeImageMetadata = async (file) => {
     try {
-        // Ensure uploads directory exists
-        const uploadDir = 'uploads/';
-        if (!fs.existsSync(uploadDir)) {
-            fs.mkdirSync(uploadDir, { recursive: true });
-        }
-
-        return {
-            path: file.path,
-            filename: file.filename,
-            originalname: file.originalname,
-            mimetype: file.mimetype
+        ensureUploadDir();
+        const imageMetadata = {
+            user: userId,
+            image_metadata: {
+                image_name: file.originalname,
+                image_path: file.path
+            }
         };
+        return await plant_service.saveToHistory(imageMetadata);
     } catch (error) {
-        console.error('Error in file upload:', error);
+        console.error('Error processing file metadata:', error);
         throw error;
     }
 };
 
-exports.deleteFile = async (filePath) => {
+const deleteFile = async (filePath) => {
     try {
         if (fs.existsSync(filePath)) {
             await fs.promises.unlink(filePath);
@@ -32,4 +37,9 @@ exports.deleteFile = async (filePath) => {
         console.error('Error deleting file:', error);
         throw error;
     }
+};
+
+module.exports = {
+    storeImageMetadata,
+    deleteFile
 };

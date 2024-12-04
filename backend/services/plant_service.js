@@ -3,32 +3,6 @@ const storageService = require('./storage_service');
 const detectionService = require('./detection_service');
 class PlantService {
 
-    async scanPlant(file, userId) {
-        // 1. Handle file upload
-        const uploadedImage = await storageService.uploadFile(file);
-        
-        // 2. Process with AI detection
-        // const analysis = await detectionService.analyzeImage(uploadedImage.path);
-        
-        // 3. Create history entry
-        const historyData = {
-            user: userId,
-            image_metadata: {
-                image_name: file.originalname,
-                image_path: uploadedImage.path
-            },
-            // AiScanResults: [{
-            //     detected_disease: analysis.diagnosis,
-            //     confidence: analysis.confidence,
-            //     disease_info: analysis.analysis,
-            //     remediation_action: analysis.recommendations
-            // }]
-        };
-
-        return await this.saveToHistory(historyData);
-    }
-
-
 
     async getAllPlant(userId) {
         return await History.find({ user: userId }).sort({ lastUpdated: -1 });
@@ -43,8 +17,8 @@ class PlantService {
         return await historyEntry.save();
     }
 
-    async deleteScan(historyId, userId) {
-        const history = await History.findOne({ _id: historyId, user: userId });
+    async deleteScan(plantId, userId) {
+        const history = await History.findOne({ _id: plantId, user: userId });
     
         if (!history) {
             return null;
@@ -56,7 +30,7 @@ class PlantService {
         }
     
         // 3. Delete the database record
-        return await History.findOneAndDelete({ _id: historyId, user: userId });
+        return await History.findOneAndDelete({ _id: plantId, user: userId });
     }
 }
 module.exports = new PlantService();
