@@ -2,6 +2,7 @@ const jwt = require('jsonwebtoken');
 const User = require('../models/user');
 const bcrypt = require('bcryptjs');
 
+// Token operations
 const generateToken = (user) => {
     return jwt.sign(
         { id: user._id },
@@ -34,12 +35,15 @@ const verifyResetToken = async (token, email) => {
 };
 
 const resetUserPassword = async (user, newPassword) => {
-    user.password = newPassword;
+    const hashedPassword = await hashPassword(newPassword);
+    user.password = hashedPassword;
     user.resetPasswordToken = undefined;
     user.resetPasswordExpires = undefined;
     await user.save();
     return user;
 };
+
+// Password operations
 const hashPassword = async (password) => {
     const salt = await bcrypt.genSalt(10);
     return await bcrypt.hash(password, salt);
@@ -54,7 +58,6 @@ module.exports = {
     verifyEmailToken,
     verifyResetToken,
     resetUserPassword,
-    comparePassword,
-    hashPassword
+    hashPassword,
+    comparePassword
 };
-

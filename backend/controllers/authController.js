@@ -1,243 +1,206 @@
-const User = require('../models/user');
-const jwt = require('jsonwebtoken');
-const { sendVerificationEmail, sendPasswordResetEmail } = require('../services/email_service');
-const { generateToken, verifyEmailToken, verifyResetToken, resetUserPassword, comparePassword } = require('../services/jwt_service');
+const userService = require("../services/user_service");
 
 exports.register = async (req, res) => {
-    try {
-        console.log('Registration request body:', req.body);
-        const { name, email, password } = req.body;
-        
-        if (!email || !password || !name) {
-            console.log('Missing required fields:', { email: !!email, password: !!password, name: !!name });
-            return res.status(400).json({
-                message: 'Registration failed: All fields are required',
-            });
-        }
-
-        console.log('Registration attempt:', { email, name });
-
-        // Check if user already exists
-        const existingUser = await User.findOne({ email });
-        if (existingUser) {
-            console.log('Registration failed: Email already exists:', email);
-            return res.status(400).json({
-                message: 'Registration failed: User Already Exists',
-            });
-        }
-        const hashedPassword = await hashPassword(password);
-
-        // create new user
-        const user = new User({
-            email,
-            password: hashedPassword,
-            name
-        });
-
-        // Generate verification token
-        const verificationToken = generateToken(user)
-        await user.save();
-
-        // Send verification email
-        try {
-            await sendVerificationEmail(user.email, verificationToken);
-        } catch (emailError) {
-            console.error('Failed to send verification email:', emailError);
-            return res.status(500).json({
-                success: false,
-                message: 'Failed to send verification email'
-            });
-        }
-
-  
-
-        
-        return res.status(201).json({
-            message: 'Registration successful. Please check your email for verification link',
-            user: {
-                id: user._id,
-                email: user.email,
-                name: user.name,
-                isEmailVerified: user.isEmailVerified
-            }
-        });
-    } catch (error) {
-        console.error('Registration error:', error);
-        res.status(500).json({ 
-            success: false,
-            message: 'Error registering user'
-        });
+  try {
+    if (!req.body || typeof req.body !== "object") {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid request body",
+      });
     }
+
+    const { firstName, lastName, email, password } = req.body;
+
+    if (!email || !password || !firstName || !lastName) {
+      console.log("Missing required fields:", {
+        email: !!email,
+        password: !!password,
+        firstName: !!firstName,
+        lastName: !!lastName,
+      });
+      return res.status(400).json({
+        success: false,
+        message: "Registration failed: All fields are required",
+      });
+    }
+    console.log("Registration attempt:", { email, firstName, lastName });
+
+    const user = await userService.registerUser({
+      email,
+      password,
+      firstName,
+      lastName,
+    });
+
+    return res.status(201).json({
+      success: true,
+      message:
+        "Registration successful. Please check your email for verification link",
+      user,
+    });
+  } catch (error) {
+    console.error("Registration error:", error);
+    return res.status(error.status || 500).json({
+      success: false,
+      message: error.message || "Registration failed",
+    });
+  }
 };
 
-
 exports.verifyEmail = async (req, res) => {
-    try {
-        const { token } = req.query;
-        
-        const user = await verifyEmailToken(token);
-        if (!user) {
-            return res.status(400).json({
-                success: false,
-                message: 'Invalid or expired verification token'
-            });
-        }
-
-        user.isEmailVerified = true;
-        user.emailVerificationToken = undefined;
-        user.emailVerificationExpires = undefined;
-        await user.save();
-
-        console.log('Email verified successfully for user:', user._id);
-        return res.status(200).json({
-            success: true,
-            message: 'Email verified successfully'
-        });
-    } catch (error) {
-        console.error('Email verification error:', error);
-        res.status(500).json({
-            success: false,
-            message: 'Error verifying email'
-        });
+  try {
+    const { token } = req.query;
+    if (!token) {
+      return res.status(400).json({
+        success: false,
+        message: "Verification token is required",
+      });
     }
+
+    await userService.verifyEmail(token);
+
+    return res.status(200).json({
+      success: true,
+      message: "Email verified successfully",
+    });
+  } catch (error) {
+    console.error("Email verification error:", error);
+    return res.status(error.status || 400).json({
+      success: false,
+      message: error.message || "Error verifying email",
+    });
+  }
 };
 
 exports.login = async (req, res) => {
-    try {
-        const { email, password } = req.body;
-        console.log("Login attempt", { email });
-        
-        const user = await User.findOne({ email });
-        
-        if (!user) {
-            return res.status(401).json({ 
-                success: false,
-                message: 'Invalid credentials' 
-            });
-        }
-
-        // Check if email is verified
-        if (!user.isEmailVerified) {
-            return res.status(403).json({
-                success: false,
-                message: 'Please verify your email before logging in',
-                isEmailVerified: false
-            });
-        }
-
-        const isMatch = await comparePassword(password, user.password);
-        if (!isMatch) {
-            return res.status(401).json({ 
-                success: false,
-                message: 'Invalid credentials' 
-            });
-        }
-        const token = generateToken(user);
-
-        console.log("User logged in successfully:", {
-            name: user.name,
-            email: user.email
-        });
-
-        // Set token in cookie
-        res.cookie('auth_token', token, {
-            httpOnly: true,
-            maxAge: 24 * 60 * 60 * 1000, // 24 hours
-            sameSite: 'lax'
-        });
-
-        return res.status(200).json({
-            success: true,
-            message: 'Login successful',
-            user: {
-                id: user._id,
-                email: user.email,
-                name: user.name,
-            }
-        });
-    } catch (error) {
-        console.error('Login error:', error);
-        return res.status(500).json({ 
-            success: false,
-            message: 'Login failed' 
-        });
+  try {
+    if (!req.body || typeof req.body !== "object") {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid request body",
+      });
     }
+
+    const { email, password } = req.body;
+    if (!email || !password) {
+      return res.status(400).json({
+        success: false,
+        message: "Email and password are required",
+      });
+    }
+
+    console.log("Login attempt", { email });
+
+    const { token, user } = await userService.loginUser(email, password);
+
+    // Set token in cookie
+    res.cookie("auth_token", token, {
+      httpOnly: true,
+      maxAge: 24 * 60 * 60 * 1000, // 24 hours
+      sameSite: "lax",
+    });
+
+    return res.status(200).json({
+      success: true,
+      message: "Login successful",
+      user,
+    });
+  } catch (error) {
+    console.error("Login error:", error);
+    return res.status(error.status || 401).json({
+      success: false,
+      message: error.message || "Login failed",
+    });
+  }
 };
+
 exports.logout = async (req, res) => {
-    try {
-        // At this point, we know the user is authenticated because of the auth middleware
-        console.log('Logging out user:', req.user.email);
-        
-        // Clear the auth token cookie
-        res.clearCookie('auth_token');
-        
-        return res.status(200).json({
-            success: true,
-            message: 'Logged out successfully'
-        });
-    } catch (error) {
-        console.error('Logout error:', error);
-        return res.status(500).json({
-            success: false,
-            message: 'Error during logout'
-        });
+  try {
+    if (!req.user) {
+      return res.status(401).json({
+        success: false,
+        message: "Not authenticated",
+      });
     }
-};
-exports.getResetPasswordToken = async (req, res) => {
-    try {
-        const { email } = req.body;
-        console.log('Password reset request for email:', email);
-        
-        const user = await User.findOne({ email });
-        if (!user) {
-            return res.status(404).json({
-                success: false,
-                message: 'User not found'
-            });
-        }
-        
-        // Generate password reset token
-        const resetToken = generateToken(user);
-        user.resetPasswordToken = resetToken;
-        user.resetPasswordExpires = Date.now() + 3600000; //1h
-        await user.save();
-        const resetLink = `${process.env.FRONTEND_URL}/reset-password?token=${resetToken}`;
-        try {
-             sendPasswordResetEmail(user.email, resetToken)
-        } catch (emailError) {
-            console.error('Password reset error:', error);
 
-        }
-    } catch (error) {
-        console.error('Password reset error:', error);
-        return res.status(500).json({
-            success: false,
-            message: 'Error resetting password'
-        });
-    }
+    console.log("Logging out user:", req.user.email);
+    res.clearCookie("auth_token");
+
+    return res.status(200).json({
+      success: true,
+      message: "Logged out successfully",
+    });
+  } catch (error) {
+    console.error("Logout error:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Error during logout",
+    });
+  }
 };
-exports.resetPassword = async (req, res) => {
-    try {
-        const { token, newPassword, email } = req.body;
-        
-        const user = await verifyResetToken(token, email);
-        if (!user) {
-            return res.status(400).json({
-                success: false,
-                message: 'Invalid or expired reset token'
-            });
-        }
-   
-        await resetUserPassword(user, newPassword);
-        sendResetLog(user.email);
-      
-        res.status(200).json({ 
-            message: 'Password reset successful' 
-        });
-    } catch (error) {
-        res.status(500).json({ 
-            message: 'Error resetting password', 
-            error: error.message 
-        });
+
+exports.getResetPasswordToken = async (req, res) => {
+  try {
+    if (!req.body || typeof req.body !== "object") {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid request body",
+      });
     }
+
+    const { email } = req.body;
+    if (!email) {
+      return res.status(400).json({
+        success: false,
+        message: "Email is required",
+      });
+    }
+
+    console.log("Password reset request for email:", email);
+
+    await userService.initiatePasswordReset(email);
+
+    return res.status(200).json({
+      success: true,
+      message: "Password reset email sent successfully",
+    });
+  } catch (error) {
+    console.error("Password reset error:", error);
+    return res.status(error.status || 400).json({
+      success: false,
+      message: error.message || "Error initiating password reset",
+    });
+  }
+};
+
+exports.resetPassword = async (req, res) => {
+  try {
+    if (!req.body || typeof req.body !== "object") {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid request body",
+      });
+    }
+
+    const { token, newPassword, email } = req.body;
+    if (!token || !newPassword || !email) {
+      return res.status(400).json({
+        success: false,
+        message: "Token, new password and email are required",
+      });
+    }
+
+    await userService.resetPassword(token, email, newPassword);
+
+    return res.status(200).json({
+      success: true,
+      message: "Password reset successful",
+    });
+  } catch (error) {
+    console.error("Password reset error:", error);
+    return res.status(error.status || 400).json({
+      success: false,
+      message: error.message || "Error resetting password",
+    });
+  }
 };

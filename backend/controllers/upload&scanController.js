@@ -1,5 +1,5 @@
 const History = require('../models/history');
-const plant_service = require('../services/plant_service');
+const DBService = require('../services/DB_service');
 const storage_service = require('../services/storage_service');
 const DetectionService = require('../services/detection_service');
 // Step 1: Upload and store image
@@ -22,7 +22,7 @@ exports.uploadImage = async (req, res) => {
         };
 
         try {
-            const savedEntry = await plant_service.saveToHistory(imageMetadata);
+            const savedEntry = await DBService.saveToHistory(imageMetadata);
             res.status(201).json({
                 success: true,
                 message: 'Image uploaded successfully',

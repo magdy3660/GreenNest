@@ -1,5 +1,5 @@
 const fs = require('fs');
-const plant_service = require('./plant_service');
+const DB_service = require('./DB_service');
 // Ensure upload directory exists
 const ensureUploadDir = () => {
     const uploadDir = 'uploads/';
@@ -19,7 +19,7 @@ const storeImageMetadata = async (file) => {
                 image_path: file.path
             }
         };
-        return await plant_service.saveToHistory(imageMetadata);
+        return await DB_service.saveToHistory(imageMetadata);
     } catch (error) {
         console.error('Error processing file metadata:', error);
         throw error;

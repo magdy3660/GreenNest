@@ -1,12 +1,12 @@
 const History = require('../models/history');
 const User = require('../models/user');
-const plant_service = require('../services/plant_service');
+const DB_service = require('../services/DB_service');
 const storage_service = require('../services/storage_service');
 
 // Get all plants for authenticated user
 exports.getPlants = async (req, res) => {
     try {
-        const plants = await plant_service.getAllPlant(req.userId)
+        const plants = await DB_service.getAllPlant(req.userId)
 
         res.status(200).json({
             success: true,
@@ -21,7 +21,7 @@ exports.getPlants = async (req, res) => {
 // Get specific plant details
 exports.getPlant = async (req, res) => {
     try {
-        const plant = plant_service.getPlant(req.params.plantId, req.userId)
+        const plant = DB_service.getPlant(req.params.plantId, req.userId)
 
         if (!plant) {
             return res.status(404).json({ message: "Plant not found" });
@@ -43,7 +43,7 @@ exports.getPlant = async (req, res) => {
 // Delete a scan
 exports.deleteScan = async (req, res) => {
     try {
-        const plant = await plant_service.deleteScan(req.params.plantId, req.userId)
+        const plant = await DB_service.deleteScan(req.params.plantId, req.userId)
 
         res.status(200).json({
             success: true,
@@ -59,7 +59,7 @@ exports.getDashboard = async (req, res) => {
     try {
         console.log('Getting dashboard for user:', req.user._id);
 
-        const histories = await plant_service.getAllPlant(req.user._id);
+        const histories = await DB_service.getAllPlant(req.user._id);
         console.log(`Found ${histories.length} entries for user`);
 
         // Map the array to get only the needed fields
@@ -84,7 +84,7 @@ exports.getDashboard = async (req, res) => {
 
 exports.getPlant = async (req, res) => {
     try {
-        const plant = await plant_service.getPlant(req.params.plantId, req.user._id)
+        const plant = await DB_service.getPlant(req.params.plantId, req.user._id)
 
 
         if (!plant) {

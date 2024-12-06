@@ -1,7 +1,7 @@
 const History = require('../models/history');
 const storageService = require('./storage_service');
 const detectionService = require('./detection_service');
-class PlantService {
+class DBService {
 
 
     async getAllPlant(userId) {
@@ -33,4 +33,4 @@ class PlantService {
         return await History.findOneAndDelete({ _id: plantId, user: userId });
     }
 }
-module.exports = new PlantService();
+module.exports = new DBService();
