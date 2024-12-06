@@ -56,11 +56,13 @@ server.use((err, req, res, next) => {
 
 server.use(libraryRoutes);
 
+// Mount the auth routes
+server.use(AuthRoutes);
+
 // Static files
 server.use("/uploads", express.static("uploads"));
 server.use(express.static(path.join(__dirname, "public")));
-// ROUTES
-server.use(AuthRoutes);
+
 const { mongoConnect } = require("./util/database");
 
 async function startServer() {

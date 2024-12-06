@@ -13,15 +13,8 @@ router.get("/api/v1/verify-email", authController.verifyEmail);
 router.post("/api/v1/forgot-password", authController.getResetPasswordToken);
 router.post("/api/v1/reset-password", authController.resetPassword);
 
-/*
-curl --location 'https://plant.id/api/v3/kb/plants/name_search?q=aloe%20vera' \
---header 'Api-Key: your_api_key' \
---header 'Content-Type: application/json'
-*/
-
 // Protected routes (auth required)
 router.use("/api/v1/users", auth); // Protect all user routes
-// router.get('/api/v1/users/:userId/profile', authController.getProfile);
 router.post("/api/v1/users/:userId/logout", authController.logout);
 
 router.post(
@@ -29,14 +22,15 @@ router.post(
   upload,
   uploadScanController.uploadImage
 );
-// Then process it with AI in a separate request
-router.post("/api/v1/users/:userId/scan", uploadScanController.scanPlant);
-router.get("/api/v1/users/:userId/dashboard", plantController.getDashboard);
 
-router.delete(
-  "/api/v1/users/:userId/plants/:plantId",
-  plantController.deleteScan
-);
+// Future endpoint for AI analysis
+// router.post(
+//   "/api/v1/users/:userId/images/analyze",
+//   upload,
+//   uploadScanController.confirmAndAnalyze
+// );
+
+router.get("/api/v1/users/:userId/dashboard", plantController.getDashboard);
 
 // 404 handler
 router.use((req, res) => {
