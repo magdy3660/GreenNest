@@ -4,7 +4,13 @@ require("dotenv").config();
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
 async function sendVerificationEmail(email, verificationToken) {
+  console.log('Environment variables:', {
+    BACKEND_URL: process.env.BACKEND_URL,
+    NODE_ENV: process.env.NODE_ENV
+  });
+  
   const verificationUrl = `${process.env.BACKEND_URL}/api/v1/verify-email?token=${verificationToken}`;
+  console.log('Generated URL:', verificationUrl);
 
   const msg = {
     to: email,
