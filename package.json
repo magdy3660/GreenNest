@@ -1,0 +1,56 @@
+{
+
+  "name": "green-nest-backend",
+
+  "version": "1.0.0",
+
+  "private": true,
+
+  "scripts": {
+
+    "start": "node src/server.js",
+
+    "dev": "nodemon server.js"
+
+  },
+
+  "engines": {
+
+    "node": ">=18.17.0"
+
+  },
+
+  "dependencies": {
+
+    "@sendgrid/mail": "^8.1.4",
+
+    "bcryptjs": "^2.4.3",
+
+    "body-parser": "^1.20.3",
+
+    "cookie-parser": "^1.4.7",
+
+    "cors": "^2.8.5",
+
+    "csv-parse": "^5.6.0",
+
+    "dotenv": "^16.3.1",
+
+    "ejs": "^3.1.10",
+
+    "express": "^4.18.2",
+
+    "jsonwebtoken": "^9.0.2",
+
+    "local": "^0.3.3",
+
+    "mongoose": "^8.8.3",
+
+    "multer": "^1.4.5-lts.1",
+
+    "nodemon": "^3.1.9"
+
+  }
+
+}
+
