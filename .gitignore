@@ -1,0 +1,31 @@
+.env
+# Node.js
+node_modules/
+npm-debug.log
+yarn-debug.log
+yarn-error.log
+
+# Environment variables
+.env
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# VS Code
+.vscode/
+
+# Uploads
+uploads/
+
+# Model files and datasets
+flask_backend/models/datasets/
+
+# Logs
+logs/
+*.log
+
+# System Files
+.DS_Store
+Thumbs.db
