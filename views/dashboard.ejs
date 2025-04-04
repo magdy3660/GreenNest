@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .navbar-brand {
+            font-weight: bold;
+        }
+        .nav-link {
+            color: #6c757d;
+            transition: color 0.3s ease;
+        }
+        .nav-link:hover {
+            color: #0d6efd;
+        }
+        .profile-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+        .main-content {
+            padding: 2rem;
+            margin-top: 4rem;
+        }
+        .welcome-section {
+            background: #f8f9fa;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-white fixed-top shadow-sm">
+        <div class="container">
+            <a class="navbar-brand" href="/dashboard/<%=userId %>">GreenNest</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/dashboard/<%=userId %>">Dashboard</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/detection/<%=userId %>">Analyze</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/history/<%= userId %>">History</a>
+                    </li>
+                </ul>
+                <div class="d-flex align-items-center">
+                    <div class="dropdown">
+                        <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" role="button" data-bs-toggle="dropdown">
+                            <img src="https://via.placeholder.com/40" alt="Profile" class="profile-avatar me-2">
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li><a class="dropdown-item" href="/profile">Profile</a></li>
+                            <li><a class="dropdown-item" href="/settings">Settings</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="/logout">Logout</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        <div class="container">
+            <div class="welcome-section mb-4">
+                <h2>Welcome, <%= user.firstName %>!</h2>
+                <p class="text-muted">Start analyzing plants or view your previous analyses.</p>
+            </div>
+            <div class="recent-history mb-4">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h3>Recent Analyses</h3>
+                    <a href="/history" class="btn btn-link">View All</a>
+                </div>
+                <div class="row">
+                    <% if (histories && histories.length > 0) { %>
+                        <% histories.slice(0, 3).forEach(function(history) { %>
+                            <div class="col-md-4 mb-3">
+                                <div class="card h-100">
+                                    <img src="<%= history.image_metadata.image_path %>" class="card-img-top" alt="Plant Image" style="height: 200px; object-fit: cover;">
+                                    <div class="card-body">
+                                        <h5 class="card-title">Disease: <%= history.predicted_disease %></h5>
+                                        <p class="card-text"><small class="text-muted">Analyzed on <%= new Date(history.scan_time).toLocaleDateString() %></small></p>
+                                        <a href="/users/<%= userId %>/histories/<%= history._id %>" class="btn btn-outline-primary btn-sm">View Details</a>
+                                    </div>
+                                </div>
+                            </div>
+                        <% }); %>
+                    <% } else { %>
+                        <div class="col-12">
+                            <div class="alert alert-info">
+                                No analysis history yet. Start by analyzing your first plant!
+                            </div>
+                        </div>
+                    <% } %>
+                </div>
+            </div>
+            <div class="row g-4">
+                <div class="col-md-6 col-lg-4">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <h5 class="card-title">Quick Analyze</h5>
+                            <p class="card-text">Upload a plant image for instant analysis.</p>
+                            <a href="/detection/<%=userId %>" class="btn btn-primary">Start Analysis</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-4">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <h5 class="card-title">Recent History</h5>
+                            <p class="card-text">View your recent plant analysis history.</p>
+                            <a href="/history/<%= userId %>" class="btn btn-outline-primary">View History</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-4">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <h5 class="card-title">Profile Settings</h5>
+                            <p class="card-text">Update your profile and preferences.</p>
+                            <a href="/profile" class="btn btn-outline-primary">Edit Profile</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

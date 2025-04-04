@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %></title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .navbar-brand {
+            font-weight: bold;
+        }
+        .nav-link {
+            color: #6c757d;
+            transition: color 0.3s ease;
+        }
+        .nav-link:hover {
+            color: #0d6efd;
+        }
+        .profile-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+        .main-content {
+            padding: 2rem;
+            margin-top: 4rem;
+        }
+        .detection-container {
+            background: white;
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .upload-area {
+            border: 2px dashed #3498db;
+            border-radius: 10px;
+            padding: 2rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 1.5rem;
+        }
+        .upload-area:hover {
+            border-color: #2980b9;
+            background: #f7f9fc;
+        }
+        .upload-icon {
+            font-size: 48px;
+            color: #3498db;
+            margin-bottom: 1rem;
+        }
+        #preview-image {
+            max-width: 100%;
+            max-height: 300px;
+            display: none;
+            margin: 1rem auto;
+        }
+        .detection-results {
+            margin-top: 2rem;
+            padding: 1rem;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            display: none;
+        }
+        .action-buttons {
+            display: none;
+            margin-top: 1rem;
+            gap: 1rem;
+            justify-content: center;
+        }
+        .action-buttons button {
+            padding: 0.5rem 2rem;
+            font-size: 1.1rem;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-white fixed-top shadow-sm">
+        <div class="container">
+            <a class="navbar-brand" href="/dashboard/<%= userId %>">GreenNest</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/dashboard/<%= userId %>">Dashboard</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="/detection">Disease Detection</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/library">Library</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="main-content">
+        <div class="detection-container">
+            <h2 class="text-center mb-4">Plant Disease Detection</h2>
+            <% if (success) { %>
+                <div class="alert alert-danger d-none" id="error-message" role="alert"></div>
+                <div class="upload-area" id="upload-area">
+                    <div class="upload-icon">📸</div>
+                    <h4>Upload Plant Image</h4>
+                    <p class="text-muted">Click or drag and drop your image here</p>
+                    <input type="file" id="file-input" accept="image/*" style="display: none;">
+                </div>
+                <img id="preview-image" class="rounded" alt="Preview">
+                <div class="action-buttons d-flex" id="action-buttons">
+                    <button class="btn btn-secondary" id="retake-button">Retake Photo</button>
+                    <button class="btn btn-primary" id="detect-button">Send for Detection</button>
+                </div>
+                <div class="detection-results" id="detection-results">
+                    <h4>Detection Results</h4>
+                    <div id="results-content"></div>
+                </div>
+            <% } else { %>
+                <div class="alert alert-danger text-center" role="alert">
+                    <h4 class="alert-heading">Unauthorized Access</h4>
+                    <p>You are not authorized to use the disease detection feature. Please ensure you are logged in with appropriate permissions.</p>
+                    <hr>
+                    <p class="mb-0">If you believe this is an error, please contact support.</p>
+                </div>
+            <% } %>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        const uploadArea = document.getElementById('upload-area');
+        const fileInput = document.getElementById('file-input');
+        const previewImage = document.getElementById('preview-image');
+        const detectionResults = document.getElementById('detection-results');
+        const actionButtons = document.getElementById('action-buttons');
+        const retakeButton = document.getElementById('retake-button');
+        const detectButton = document.getElementById('detect-button');
+
+        uploadArea.addEventListener('click', () => fileInput.click());
+        uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadArea.style.borderColor = '#2980b9';
+            uploadArea.style.background = '#f7f9fc';
+        });
+
+        uploadArea.addEventListener('dragleave', () => {
+            uploadArea.style.borderColor = '#3498db';
+            uploadArea.style.background = 'white';
+        });
+
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            const files = e.dataTransfer.files;
+            if (files.length) handleFile(files[0]);
+        });
+
+        fileInput.addEventListener('change', (e) => {
+            if (e.target.files.length) handleFile(e.target.files[0]);
+        });
+
+        retakeButton.addEventListener('click', () => {
+            previewImage.style.display = 'none';
+            actionButtons.style.display = 'none';
+            detectionResults.style.display = 'none';
+            uploadArea.style.display = 'block';
+            fileInput.value = '';
+        });
+
+        detectButton.addEventListener('click', async () => {
+            const errorMessageDiv = document.getElementById('error-message');
+            errorMessageDiv.classList.add('d-none');
+            
+            try {
+                const formData = new FormData();
+                formData.append('plantImage', fileInput.files[0]);
+                
+                detectButton.disabled = true;
+                detectButton.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Detecting...';
+                
+                const userId = '<%= user._id %>'; // Get user ID from EJS template
+                const uploadForm = document.createElement('form');
+                uploadForm.method = 'POST';
+                uploadForm.action = `/detection/${userId}`;
+                uploadForm.enctype = 'multipart/form-data';
+                
+                const imageInput = document.querySelector('#file-input').cloneNode(true);
+                imageInput.name = 'plantImage';
+                uploadForm.appendChild(imageInput);
+                
+                document.body.appendChild(uploadForm);
+                uploadForm.submit();
+                
+            } catch (error) {
+                console.error('Error:', error);
+                errorMessageDiv.textContent = error.message || 'Failed to process image. Please try again.';
+                errorMessageDiv.classList.remove('d-none');
+                detectButton.disabled = false;
+                detectButton.innerHTML = 'Send for Detection';
+            }
+        });
+
+        function handleFile(file) {
+            if (!file.type.startsWith('image/')) {
+                alert('Please upload an image file');
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                previewImage.src = e.target.result;
+                previewImage.style.display = 'block';
+                uploadArea.style.display = 'none';
+                actionButtons.style.display = 'flex';
+            };
+            reader.readAsDataURL(file);
+        }
+    </script>
+</body>
+</html>

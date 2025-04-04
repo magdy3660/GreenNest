@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css">
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <style>
+        .navbar-brand { font-weight: bold; }
+        .nav-link { color: #6c757d; transition: color 0.3s ease; }
+        .nav-link:hover { color: #0d6efd; }
+        .profile-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+        .main-content {
+            padding: 2rem;
+            margin-top: 4rem;
+            background-color: #f8f9fa;
+        }
+        .welcome-section {
+            background: white;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .result-card {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+        }
+        .result-card:hover {
+            transform: translateY(-5px);
+        }
+        .confidence-badge {
+            font-size: 1.1rem;
+            padding: 0.5rem 1rem;
+        }
+        .disease-info {
+            background: #fff;
+            padding: 1.5rem;
+            border-radius: 10px;
+            margin-bottom: 2rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        .disease-info h2 {
+            color: #2c3e50;
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+        .disease-info p {
+            color: #34495e;
+            line-height: 1.6;
+        }
+        .treatment-step {
+            background: #f8f9fa;
+            padding: 1.2rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            border-left: 4px solid #0d6efd;
+            transition: transform 0.2s ease;
+        }
+        .treatment-step:hover {
+            transform: translateX(5px);
+        }
+        .step-number {
+            background: #0d6efd;
+            color: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 10px;
+            font-weight: bold;
+        }
+        .markdown-content {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        }
+        .markdown-content h1, .markdown-content h2 {
+            color: #2c3e50;
+            margin-bottom: 1rem;
+        }
+        .markdown-content p {
+            color: #34495e;
+            line-height: 1.6;
+            margin-bottom: 1rem;
+        }
+        .markdown-content ul {
+            padding-left: 1.5rem;
+            margin-bottom: 1rem;
+        }
+        .markdown-content li {
+            margin-bottom: 0.5rem;
+        }
+        .markdown-content em, .markdown-content strong {
+            color: #2c3e50;
+        }
+        #saveHistoryBtn {
+            display: none; /* Hidden by default, shown after remediation is loaded */
+        }
+        .toast-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 9999;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-white fixed-top shadow-sm">
+        <div class="container">
+            <a class="navbar-brand" href="/dashboard/<%= userId %>">Green Nest</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/dashboard/<%= userId %>">Dashboard</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/detection/<%= userId %>">Analyze</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/history/<%= userId %>">History</a>
+                    </li>
+                </ul>
+                <div class="d-flex align-items-center">
+                    <div class="dropdown">
+                        <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" role="button" data-bs-toggle="dropdown">
+                            <img src="https://via.placeholder.com/40" alt="Profile" class="profile-avatar me-2">
+                            <span class="d-none d-lg-inline"><%= user.username %></span>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li><a class="dropdown-item" href="/profile">Profile</a></li>
+                            <li><a class="dropdown-item" href="/settings">Settings</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="/logout">Logout</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        <div class="container">
+            <!-- Toast for notifications -->
+            <div class="toast-container">
+                <div id="saveToast" class="toast align-items-center text-white bg-success border-0" role="alert" aria-live="assertive" aria-atomic="true">
+                    <div class="d-flex">
+                        <div class="toast-body">
+                            <i class="bi bi-check-circle me-2"></i>Successfully saved to history!
+                        </div>
+                        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="welcome-section mb-4">
+                <h2><i class="bi bi-clipboard-data me-2"></i>Scan Results</h2>
+                <p class="text-muted">Here are the detailed results of your plant disease detection</p>
+            </div>
+            <div class="row">
+                <div class="col-lg-8 mx-auto">
+                    <div class="result-card p-4 mb-4">
+                        <div class="text-center mb-4">
+                            <img src="<%= scanResult.image_metadata.image_path %>" class="img-fluid rounded" style="max-height: 400px;" alt="Scanned Plant">
+                            <div class="mt-3">
+                                <span class="badge bg-info confidence-badge">
+                                    <i class="bi bi-graph-up me-2"></i>Confidence: <%= scanResult.prediction.confidence %>%
+                                </span>
+                            </div>
+                        </div>
+
+                        <div class="detection-info">
+                            <div class="mb-4">
+                                <h4 class="text-primary"><i class="bi bi-bug me-2"></i>Detected Disease</h4>
+                                <div class="alert alert-light border">
+                                    <h5 class="mb-2"><%= scanResult.prediction.prediction %></h5>
+                                    <p class="mb-0 text-muted"><%= scanResult.prediction.message %></p>
+                                </div>
+                            </div>
+                            <% if (success) { %>
+                             
+                              <% console.log(success)  %>
+                                <% console.log("X"*100) %>
+
+                            <div class="mb-4">
+                                <h4 class="text-primary"><i class="bi bi-bandaid me-2"></i>Treatment Steps</h4>
+                                <div id="treatment-container">
+                                  <div class="alert alert-info">
+                                    <i class="bi bi-info-circle me-2"></i>Click below to get treatment information.
+                                    <button id="getRemediationBtn" class="btn btn-sm btn-outline-primary ms-3">
+                                      <i class="bi bi-search me-1"></i>Get Remediation Steps
+                                    </button>
+                                  </div>
+                                </div>
+                            </div>
+                            <% } %>
+
+                        <div class="text-center mt-4">
+                            <a href="/detection/<%= userId %>" class="btn btn-primary me-2">
+                                <i class="bi bi-camera me-2"></i>Scan Another Plant
+                            </a>
+                            <button id="saveHistoryBtn" class="btn btn-success me-2" disabled>
+                                <i class="bi bi-bookmark-plus me-2"></i>Save to History
+                            </button>
+                            <a href="/dashboard/<%= userId %>" class="btn btn-outline-secondary">
+                                <i class="bi bi-house me-2"></i>Back to Dashboard
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+        const getRemediationBtn = document.getElementById('getRemediationBtn');
+        const saveHistoryBtn = document.getElementById('saveHistoryBtn');
+        let remediationSteps = null;
+        const toast = new bootstrap.Toast(document.getElementById('saveToast'));
+        
+        if (getRemediationBtn) {
+          getRemediationBtn.addEventListener('click', async function() {
+            try {
+              // Show loading state
+              const treatmentContainer = document.getElementById('treatment-container');
+              treatmentContainer.innerHTML = `
+                <div class="text-center p-4">
+                  <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                  </div>
+                  <p class="mt-2">Fetching remediation steps...</p>
+                </div>
+              `;
+              
+              // Get the disease name from the page
+              const diseaseName = '<%= scanResult.prediction.prediction %>';
+              
+              // Make the API request with retry mechanism
+              const maxRetries = 3;
+              let retryCount = 0;
+              let response;
+
+              while (retryCount < maxRetries) {
+                try {
+                  const controller = new AbortController();
+                  const timeoutId = setTimeout(() => controller.abort(), 30000); // 30 second timeout
+
+                  response = await fetch('/api/disease-information', {
+                    method: 'POST',
+                    headers: {
+                      'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ diseaseName }),
+                    signal: controller.signal
+                  });
+
+                  clearTimeout(timeoutId);
+                  if (response.ok) break;
+
+                  throw new Error(`Server responded with ${response.status}`);
+                } catch (error) {
+                  retryCount++;
+                  if (error.name === 'AbortError') {
+                    if (retryCount === maxRetries) throw new Error('Request timed out after multiple attempts');
+                    treatmentContainer.innerHTML = `
+                      <div class="alert alert-warning">
+                        <i class="bi bi-clock-history me-2"></i>Request taking longer than expected. Retrying... (Attempt ${retryCount}/${maxRetries})
+                      </div>
+                    `;
+                  } else {
+                    if (retryCount === maxRetries) throw error;
+                    treatmentContainer.innerHTML = `
+                      <div class="alert alert-warning">
+                        <i class="bi bi-exclamation-triangle me-2"></i>Request failed. Retrying... (Attempt ${retryCount}/${maxRetries})
+                      </div>
+                    `;
+                  }
+                  // Exponential backoff
+                  await new Promise(resolve => setTimeout(resolve, Math.min(1000 * Math.pow(2, retryCount), 8000)));
+                }
+              }
+              
+              // Parse the JSON response
+              const data = await response.json();
+              console.log('Response data:', data); // Add this for debugging
+              
+              if (data.diseaseTreatment) {
+                // Process the information from Gemini
+                const information = data.diseaseTreatment;
+                remediationSteps = information; // Store for later use
+                
+                // Split into sections - try to identify sections based on common patterns
+                let sections = information.split(/(?=##|\n\n)/g).filter(section => section.trim() !== '');
+                
+                // If there are no clear sections, just use the whole text
+                if (sections.length <= 1) {
+                  sections = [information];
+                }
+                
+                // Convert markdown to HTML
+                const contentHtml = `
+                  <div class="disease-info markdown-content mb-4">
+                    ${marked.parse(information)}
+                  </div>
+                `;
+                
+                treatmentContainer.innerHTML = contentHtml;
+                
+                // Show save button
+                saveHistoryBtn.style.display = 'inline-block';
+                saveHistoryBtn.disabled = false;
+              } else {
+                treatmentContainer.innerHTML = `
+                  <div class="alert alert-warning">
+                    <i class="bi bi-exclamation-triangle me-2"></i>No treatment steps available for this disease.
+                    <button id="retryRemediationBtn" class="btn btn-sm btn-outline-warning ms-3">
+                      <i class="bi bi-arrow-clockwise me-1"></i>Try Again
+                    </button>
+                  </div>
+                `;
+                saveHistoryBtn.style.display = 'none';
+              }
+              
+            } catch (error) {
+              console.error('Error fetching remediation steps:', error);
+              document.getElementById('treatment-container').innerHTML = `
+                <div class="alert alert-danger">
+                  <i class="bi bi-exclamation-circle me-2"></i>An error occurred: ${error.message}
+                  <button id="retryRemediationBtn" class="btn btn-sm btn-outline-danger ms-3">
+                    <i class="bi bi-arrow-clockwise me-1"></i>Retry
+                  </button>
+                </div>
+              `;
+              saveHistoryBtn.style.display = 'none';
+            }
+            
+            // Add event listener to retry button
+            const retryBtn = document.getElementById('retryRemediationBtn');
+            if (retryBtn) {
+              retryBtn.addEventListener('click', function() {
+                getRemediationBtn.click();
+              });
+            }
+          });
+        }
+        
+        // Save to History functionality
+        if (saveHistoryBtn) {
+          saveHistoryBtn.addEventListener('click', async function() {
+            try {
+              // Disable button to prevent double submission
+              saveHistoryBtn.disabled = true;
+              saveHistoryBtn.innerHTML = '<i class="bi bi-hourglass-split me-2"></i>Saving...';
+              
+              // Get necessary data
+              const diseaseName = '<%= scanResult.prediction.prediction %>';
+              const imageName = '<%= scanResult.image_metadata.image_name %>';
+              const imagePath = '<%= scanResult.image_metadata.image_path %>';
+              
+              // Create payload
+              const payload = {
+                predicted_disease: diseaseName,
+                image_metadata: {
+                  image_name: imageName,
+                  image_path: imagePath
+                },
+                remediation_steps: remediationSteps
+              };
+              
+              // Send to server
+              const response = await fetch('/api/v1/<%= userId %>/histories', {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(payload)
+              });
+              
+              if (response.ok) {
+                // Show success toast
+                toast.show();
+                
+                // Update button
+                saveHistoryBtn.innerHTML = '<i class="bi bi-check-circle me-2"></i>Saved!';
+                saveHistoryBtn.classList.remove('btn-success');
+                saveHistoryBtn.classList.add('btn-outline-success');
+              } else {
+                throw new Error('Failed to save history');
+              }
+            } catch (error) {
+              console.error('Error saving to history:', error);
+              saveHistoryBtn.innerHTML = '<i class="bi bi-exclamation-triangle me-2"></i>Error Saving';
+              saveHistoryBtn.classList.remove('btn-success');
+              saveHistoryBtn.classList.add('btn-danger');
+              
+              // Re-enable after error
+              setTimeout(() => {
+                saveHistoryBtn.disabled = false;
+                saveHistoryBtn.innerHTML = '<i class="bi bi-bookmark-plus me-2"></i>Try Again';
+                saveHistoryBtn.classList.remove('btn-danger');
+                saveHistoryBtn.classList.add('btn-success');
+              }, 3000);
+            }
+          });
+        }
+      });
+    </script>
+</body>
+</html>

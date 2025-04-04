@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Plant Details</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .navbar-brand {
+            font-weight: bold;
+        }
+        .nav-link {
+            color: #6c757d;
+            transition: color 0.3s ease;
+        }
+        .nav-link:hover {
+            color: #0d6efd;
+        }
+        .main-content {
+            padding: 2rem;
+            margin-top: 4rem;
+        }
+        .plant-header {
+            background: #f8f9fa;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+        }
+        .plant-image {
+            width: 100%;
+            height: 400px;
+            object-fit: cover;
+            border-radius: 10px;
+            margin-bottom: 1.5rem;
+        }
+        .plant-details {
+            background: white;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .detail-section {
+            margin-bottom: 1.5rem;
+        }
+        .detail-section:last-child {
+            margin-bottom: 0;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-white fixed-top shadow-sm">
+        <div class="container">
+            <a class="navbar-brand" href="/">GreenNest</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/library">Library</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        <div class="container">
+            <% if (plant) { %>
+                <div class="plant-header">
+                    <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb">
+                            <li class="breadcrumb-item"><a href="/library">Library</a></li>
+                            <li class="breadcrumb-item active" aria-current="page"><%= plant.name %></li>
+                        </ol>
+                    </nav>
+                    <h1 class="display-4"><%= plant.name %></h1>
+                    <p class="text-muted fs-5"><em><%= plant.scientific_name %></em></p>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <img src="<%= plant.image_url %>" alt="<%= plant.name %>" class="plant-image">
+                    </div>
+                    <div class="col-md-6">
+                        <div class="plant-details">
+                            <div class="detail-section">
+                                <h3>Description</h3>
+                                <p><%= plant.description || 'No description available.' %></p>
+                            </div>
+
+                            <div class="detail-section">
+                                <h3>Plant Characteristics</h3>
+                                <ul class="list-unstyled">
+                                    <% if (plant.rank) { %>
+                                        <li><strong>Rank:</strong> <%= plant.rank %></li>
+                                    <% } %>
+                                    <% if (plant.family) { %>
+                                        <li><strong>Family:</strong> <%= plant.family %></li>
+                                        <% if (plant.family_common_name) { %>
+                                            <li><strong>Family Common Name:</strong> <%= plant.family_common_name %></li>
+                                        <% } %>
+                                    <% } %>
+                                    <% if (plant.genus) { %>
+                                        <li><strong>Genus:</strong> <%= plant.genus %></li>
+                                    <% } %>
+                                    <% if (plant.year) { %>
+                                        <li><strong>Year:</strong> <%= plant.year %></li>
+                                    <% } %>
+                                    <% if (plant.author) { %>
+                                        <li><strong>Author:</strong> <%= plant.author %></li>
+                                    <% } %>
+                                    <% if (plant.bibliography) { %>
+                                        <li><strong>Bibliography:</strong> <%= plant.bibliography %></li>
+                                    <% } %>
+                                    <% if (plant.average_height_cm || plant.maximum_height_cm) { %>
+                                        <li><strong>Height:</strong> 
+                                            <% if (plant.average_height_cm) { %>Average: <%= plant.average_height_cm %> cm<% } %>
+                                            <% if (plant.maximum_height_cm) { %><% if (plant.average_height_cm) { %>, <% } %>Maximum: <%= plant.maximum_height_cm %> cm<% } %>
+                                        </li>
+                                    <% } %>
+                                    <% if (plant.planting_spread_cm) { %>
+                                        <li><strong>Spread:</strong> <%= plant.planting_spread_cm %> cm</li>
+                                    <% } %>
+                                    <% if (plant.growth_habit) { %>
+                                        <li><strong>Growth Habit:</strong> <%= plant.growth_habit %></li>
+                                    <% } %>
+                                    <% if (plant.growth_form) { %>
+                                        <li><strong>Growth Form:</strong> <%= plant.growth_form %></li>
+                                    <% } %>
+                                    <% if (plant.growth_rate) { %>
+                                        <li><strong>Growth Rate:</strong> <%= plant.growth_rate %></li>
+                                    <% } %>
+                                    <% if (plant.common_names && plant.common_names.length > 0) { %>
+                                        <li><strong>Common Names:</strong> <%= plant.common_names.join(', ') %></li>
+                                    <% } %>
+                                </ul>
+                            </div>
+                            <% if (plant.distributions && plant.distributions.length > 0) { %>
+                            <div class="detail-section">
+                                <h3>Distribution</h3>
+                                <p><%= plant.distributions.join(', ') %></p>
+                            </div>
+                            <% } %>
+                            <% if (plant.affected_parts && plant.affected_parts.length > 0) { %>
+                            <div class="detail-section">
+                                <h3>Affected Parts</h3>
+                                <p><%= plant.affected_parts.join(', ') %></p>
+                            </div>
+                            <% } %>
+
+                            <div class="detail-section">
+                                <h3>Growing Information</h3>
+                                <ul class="list-unstyled">
+                                    <% if (plant.light) { %>
+                                        <li><strong>Light:</strong> <%= plant.light %></li>
+                                    <% } %>
+                                    <% if (plant.humidity) { %>
+                                        <li><strong>Humidity:</strong> <%= plant.humidity %></li>
+                                    <% } %>
+                                    <% if (plant.soil_nutriments) { %>
+                                        <li><strong>Soil Nutriments:</strong> <%= plant.soil_nutriments %></li>
+                                    <% } %>
+                                    <% if (plant.soil_salinity) { %>
+                                        <li><strong>Soil Salinity:</strong> <%= plant.soil_salinity %></li>
+                                    <% } %>
+                                    <% if (plant.anaerobic_tolerance) { %>
+                                        <li><strong>Anaerobic Tolerance:</strong> <%= plant.anaerobic_tolerance %></li>
+                                    <% } %>
+                                    <% if (plant.ph_minimum || plant.ph_maximum) { %>
+                                        <li><strong>pH Range:</strong> 
+                                            <% if (plant.ph_minimum && plant.ph_maximum) { %>
+                                                <%= plant.ph_minimum %> - <%= plant.ph_maximum %>
+                                            <% } else { %>
+                                                <% if (plant.ph_minimum) { %>Minimum: <%= plant.ph_minimum %><% } %>
+                                                <% if (plant.ph_maximum) { %>Maximum: <%= plant.ph_maximum %><% } %>
+                                            <% } %>
+                                        </li>
+                                    <% } %>
+                                    <% if (plant.minimum_root_depth_cm) { %>
+                                        <li><strong>Minimum Root Depth:</strong> <%= plant.minimum_root_depth_cm %> cm</li>
+                                    <% } %>
+                                    <% if (plant.planting_row_spacing_cm) { %>
+                                        <li><strong>Row Spacing:</strong> <%= plant.planting_row_spacing_cm %> cm</li>
+                                    <% } %>
+                                    <% if (plant.planting_description) { %>
+                                        <li><strong>Planting Description:</strong> <%= plant.planting_description %></li>
+                                    <% } %>
+                                    <% if (plant.planting_sowing_description) { %>
+                                        <li><strong>Sowing Description:</strong> <%= plant.planting_sowing_description %></li>
+                                    <% } %>
+                                </ul>
+                            </div>
+
+                            <% if (plant.flower_color || plant.foliage_color || plant.fruit_color || 
+                                  plant.bloom_months || plant.fruit_months || plant.growth_months) { %>
+                            <div class="detail-section">
+                                <h3>Seasonal Characteristics</h3>
+                                <ul class="list-unstyled">
+                                    <% if (plant.flower_color) { %>
+                                        <li><strong>Flower Color:</strong> <%= plant.flower_color %></li>
+                                    <% } %>
+                                    <% if (plant.foliage_color) { %>
+                                        <li><strong>Foliage Color:</strong> <%= plant.foliage_color %></li>
+                                    <% } %>
+                                    <% if (plant.foliage_texture) { %>
+                                        <li><strong>Foliage Texture:</strong> <%= plant.foliage_texture %></li>
+                                    <% } %>
+                                    <% if (plant.fruit_color) { %>
+                                        <li><strong>Fruit Color:</strong> <%= plant.fruit_color %></li>
+                                    <% } %>
+                                    <% if (plant.bloom_months && plant.bloom_months.length > 0) { %>
+                                        <li><strong>Bloom Months:</strong> <%= plant.bloom_months.join(', ') %></li>
+                                    <% } %>
+                                    <% if (plant.fruit_months && plant.fruit_months.length > 0) { %>
+                                        <li><strong>Fruit Months:</strong> <%= plant.fruit_months.join(', ') %></li>
+                                    <% } %>
+                                    <% if (plant.growth_months && plant.growth_months.length > 0) { %>
+                                        <li><strong>Growth Months:</strong> <%= plant.growth_months.join(', ') %></li>
+                                    <% } %>
+                                </ul>
+                            </div>
+                            <% } %>
+                         
+                            <div class="detail-section">
+                                <h3>Additional Resources</h3>
+                                <div class="d-flex flex-wrap gap-2">
+                                    <% if (plant.wiki_url) { %>
+                                        <a href="<%= plant.wiki_url %>" target="_blank" rel="noopener noreferrer" class="btn btn-outline-primary">Wikipedia</a>
+                                    <% } %>
+                                    <% if (plant.url_usda) { %>
+                                        <a href="<%= plant.url_usda %>" target="_blank" rel="noopener noreferrer" class="btn btn-outline-primary">USDA</a>
+                                    <% } %>
+                                    <% if (plant.url_gbif) { %>
+                                        <a href="<%= plant.url_gbif %>" target="_blank" rel="noopener noreferrer" class="btn btn-outline-primary">GBIF</a>
+                                    <% } %>
+                                    <% if (plant.url_powo) { %>
+                                        <a href="<%= plant.url_powo %>" target="_blank" rel="noopener noreferrer" class="btn btn-outline-primary">POWO</a>
+                                    <% } %>
+                                    <% if (plant.url_tropicos) { %>
+                                        <a href="<%= plant.url_tropicos %>" target="_blank" rel="noopener noreferrer" class="btn btn-outline-primary">Tropicos</a>
+                                    <% } %>
+                                    <% if (plant.url_plantnet) { %>
+                                        <a href="<%= plant.url_plantnet %>" target="_blank" rel="noopener noreferrer" class="btn btn-outline-primary">PlantNet</a>
+                                    <% } %>
+                                    <% if (plant.url_tela_botanica) { %>
+                                        <a href="<%= plant.url_tela_botanica %>" target="_blank" rel="noopener noreferrer" class="btn btn-outline-primary">Tela Botanica</a>
+                                    <% } %>
+                                    <% if (plant.url_openfarm) { %>
+                                        <a href="<%= plant.url_openfarm %>" target="_blank" rel="noopener noreferrer" class="btn btn-outline-primary">OpenFarm</a>
+                                    <% } %>
+                                </div>
+                            </div>
+                        
+                            <% if (plant.edible || plant.vegetable || (plant.edible_part && plant.edible_part.length > 0)) { %>
+                            <div class="detail-section">
+                                <h3>Edibility Information</h3>
+                                <ul class="list-unstyled">
+                                    <% if (plant.edible !== undefined) { %>
+                                        <li><strong>Edible:</strong> <%= plant.edible ? 'Yes' : 'No' %></li>
+                                    <% } %>
+                                    <% if (plant.vegetable !== undefined) { %>
+                                        <li><strong>Vegetable:</strong> <%= plant.vegetable ? 'Yes' : 'No' %></li>
+                                    <% } %>
+                                    <% if (plant.edible_part && plant.edible_part.length > 0) { %>
+                                        <li><strong>Edible Parts:</strong> <%= plant.edible_part.join(', ') %></li>
+                                    <% } %>
+                                </ul>
+                            </div>
+                            <% } %>
+                        </div>
+                    </div>
+                </div>
+            <% } else { %>
+                <div class="alert alert-info">
+                    Plant information not available.
+                </div>
+            <% } %>
+        </div>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

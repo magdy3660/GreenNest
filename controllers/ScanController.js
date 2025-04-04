@@ -3,14 +3,22 @@ const DBService = require("../services/DB_service");
 const DetectionService = require("../services/detection_service");
 
 exports.sendForDetection = async (req, res) => {
-  try {
-    if (!req.file) {
+  const userId = req.params.userId;
+  if (req.userId !== userId) {
+      return res.status(403).json({
+          success: false,
+          message: "Unauthorized access"
+      });
+  }
+  
+  if (!req.file) {
       return res.status(400).json({
         success: false,
         message: "No image file uploaded",
       });
     }
-    try {
+
+  try {
       const scanResult = await DetectionService.analyzeImageFromPath(req.file.path, req.params.userId);
 
       // Create image metadata object
@@ -24,20 +32,12 @@ exports.sendForDetection = async (req, res) => {
       image_metadata
       });
 
-    } catch (err) {
+    } catch (error) {
       return res.status(503).json({
         success: false,
-        message: err.message || "AI service is currently unavailable",
+        message: error.message || "AI service is currently unavailable",
       });
     }
-
-  } catch (error) {
-    return res.status(500).json({
-      success: false,
-      message: "Failed to process request",
-      error: error.message
-    });
-  }
 };
 exports.saveToHistory = async (req, res) => {
     try {

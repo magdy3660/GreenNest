@@ -12,7 +12,7 @@ const registerAuthenticatedRoutes = (router) => {
   
   router.post("/api/v1/forgot-password", authController.getResetPasswordToken);
   router.post("/api/v1/reset-password", authController.resetPassword);
-  
+  router.get("/api/v1/verify-email/:token", authController.verifyEmail);
   // Protected routes (auth required)
   router.use("/api/v1/users", auth); // Protect all user routes
   router.post("/api/v1/users/:userId/logout", authController.logout);
