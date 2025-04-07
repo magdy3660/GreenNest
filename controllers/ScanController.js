@@ -17,10 +17,17 @@ exports.sendForDetection = async (req, res) => {
         message: "No image file uploaded",
       });
     }
-
+   console.log(" File recieved, sending for detection....")
   try {
       const scanResult = await DetectionService.analyzeImageFromPath(req.file.path, req.params.userId);
 
+      if (scanResult.success === false) {
+        return res.status(400).json({
+          success: false,
+          message: scanResult.message,
+          supported_plants: scanResult.supported_plants
+        });
+      }
       // Create image metadata object
       const image_metadata = {
         image_name: req.file.originalname,
@@ -28,12 +35,13 @@ exports.sendForDetection = async (req, res) => {
       };
       // const {message,prediction,success} = scanResult
       return res.status(200).json({
-      scanResult,
+        message:"Successfully Identified leaf Condition",
+      scanResult: scanResult.data.scanResult,
       image_metadata
       });
 
     } catch (error) {
-      return res.status(503).json({
+      return res.status(error.status || 503).json({
         success: false,
         message: error.message || "AI service is currently unavailable",
       });

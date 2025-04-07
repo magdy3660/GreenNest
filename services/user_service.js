@@ -106,7 +106,7 @@ class UserService {
       return {
         token,
         user: {
-          id: user._id,
+          userId: user._id,
           email: user.email,
           firstName: user.firstName,
           lastName: user.lastName,

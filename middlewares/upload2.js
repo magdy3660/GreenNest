@@ -46,6 +46,8 @@ const upload = multer({
 
 // Middleware wrapper for better error handling
 module.exports = (req, res, next) => {
+  console.log("Received file upload request");
+
   const uploadMiddleware = upload.single('plantImage');
   
   uploadMiddleware(req, res, (err) => {
@@ -56,9 +58,10 @@ module.exports = (req, res, next) => {
           message: 'File size too large. Maximum size is 5MB'
         });
       }
+      // Handle other multer errors
       return res.status(400).json({
         success: false,
-        message: `Upload error: ${err.message}`
+        message: `File upload error: ${err.code}`
       });
     } else if (err) {
       return res.status(500).json({
@@ -66,6 +69,16 @@ module.exports = (req, res, next) => {
         message: err.message
       });
     }
+    
+    // Check if file was uploaded successfully
+    if (!req.file) {
+      console.log("No file detected in the request");
+      // Continue anyway, let the controller handle missing file
+    } else {
+      console.log(`File uploaded successfully: ${req.file.originalname}`);
+    }
+    
+    console.log("Proceeding to next middleware/controller");
     next();
   });
 };

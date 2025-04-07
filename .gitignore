@@ -21,6 +21,7 @@ uploads/
 
 # Model files and datasets
 flask_backend/models/datasets/
+flask_backend/models/dataset
 
 # Logs
 logs/
