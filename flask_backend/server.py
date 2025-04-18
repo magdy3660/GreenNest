@@ -18,7 +18,7 @@ app = Flask(__name__)
 
 # --- Configuration ---
 print("Configuring upload folder......")
-UPLOAD_FOLDER = '..\\uploads' # This MUST match the directory Node.js uses
+UPLOAD_FOLDER = '../uploads' # This MUST match the directory Node.js uses
 app.config['UPLOADS_FOLDER'] = os.path.abspath(UPLOAD_FOLDER)
 # app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024 # Not strictly needed for this endpoint anymore
 

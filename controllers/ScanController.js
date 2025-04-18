@@ -1,163 +1,233 @@
-const History = require("../models/history");
 const DBService = require("../services/DB_service");
 const DetectionService = require("../services/detection_service");
+const RemediationService = require("../services/remediation_service")
 
+
+// SCANS ===================================================================================
 exports.sendForDetection = async (req, res) => {
-  const userId = req.params.userId;
-  if (req.userId !== userId) {
-      return res.status(403).json({
-          success: false,
-          message: "Unauthorized access"
-      });
-  }
-  
-  if (!req.file) {
-      return res.status(400).json({
-        success: false,
-        message: "No image file uploaded",
-      });
-    }
-   console.log(" File recieved, sending for detection....")
-  try {
-      const scanResult = await DetectionService.analyzeImageFromPath(req.file.path, req.params.userId);
+  const userId = req.params.userId
+  if (userId != req.user.userId) {     
+      res.status(403).json({
+      success:false,
+      message:"UnAuthorized access to profile, Missing userId"
+  })}
+  const filePath = req.file?.path;
 
-      if (scanResult.success === false) {
-        return res.status(400).json({
-          success: false,
-          message: scanResult.message,
-          supported_plants: scanResult.supported_plants
-        });
-      }
-      // Create image metadata object
-      const image_metadata = {
-        image_name: req.file.originalname,
-        image_path: req.file.path
-      };
-      // const {message,prediction,success} = scanResult
-      return res.status(200).json({
-        message:"Successfully Identified leaf Condition",
-      scanResult: scanResult.data.scanResult,
-      image_metadata
-      });
+  if (!filePath) {
 
-    } catch (error) {
-      return res.status(error.status || 503).json({
-        success: false,
-        message: error.message || "AI service is currently unavailable",
-      });
-    }
-};
-exports.saveToHistory = async (req, res) => {
-    try {
-        const {prediction, image_metadata} = req.body.historyDetail;
-         const entry = {
-          prediction:prediction,
-          image_metadata:{
-            image_name:image_metadata.image_name,
-            image_path:image_metadata.image_path
-          }
-         }
-        
-
-        const savedEntry = await DBService.saveToHistory(req.params.userId, entry);
-
-        return res.status(201).json({
-            success: true,
-            message: "Scan results saved to history",
-            data: savedEntry
-        });
-
-    } catch (error) {
-        console.error('Save to history error:', error);
-        return res.status(500).json({
-            success: false,
-            message: "Failed to save scan results",
-            error: error.message
-        });
-    }
-};
-exports.getHistory = async(req,res) => {
-  const userId = req.params.userId;
-  const cookieUserId = req.userId
-  if (userId != cookieUserId) {
-    res.status(403).res.json({
-      msg: "Forbidden: you're not allowed to update this resource",
-      success: false
-    })
-  }
- 
-  try {
-    // Check if userId is a valid MongoDB ObjectId
-    if (!/^[0-9a-fA-F]{24}$/.test(userId)) {
-      return res.status(400).json({
-        success: false,
-        message: "Invalid user ID format"
-      });
-    }
-    const history = await DBService.getHistory(userId);
-    
-    if (!history || history.length === 0) {
-      return res.status(404).json({
-        success: false,
-        message: "No history found for this user"
-      });
-    }
-
-    return res.status(200).json({
-      success: true,
-      message: "History retrieved successfully",
-      data: history
-    });
-  } catch (error) {
-    console.error('Error fetching history:', error);
-    return res.status(500).json({
-      success: false,
-      message: "Failed to fetch history",
-      error: error.message
-    });
-  }
-};
-  
-exports.getHistoryEntry = async(req,res) => {
-  if (!req.params.userId || !req.params.historyId) {
     return res.status(400).json({
       success: false,
-      message: "UserId and HistoryId are required"
+      message: "No file uploaded or file path missing."
     });
   }
 
-  const {userId, historyId} = req.params;
-
   try {
-    // Check if userId and historyId are valid MongoDB ObjectIds
-    if (!/^[0-9a-fA-F]{24}$/.test(userId) || !/^[0-9a-fA-F]{24}$/.test(historyId)) {
+
+    const analysisResult = await DetectionService.analyzeImageFromPath(filePath, userId);
+
+    if (analysisResult.status === 400) {
+      const analysisError = analysisResult.err
       return res.status(400).json({
         success: false,
-        message: "Invalid user ID or history ID format"
-      });
+        error: {
+            message: analysisError.message,
+            supportedSpecies: analysisError.supported_plants
+        }
+    } );
     }
+    // clean the data
+    const { disease, confidence } = analysisResult.scanResult
+    const imageMetadata = {imageName: req.file?.originalname, imagePath: req.file?.path}
+    return res.status(200).json({
+      success: true,
+      message: "Successfully identified plant condition",
+      data: {
+        disease,
+        confidence,
+        imageMetadata
+      }
+    });
 
-    const historyEntry = await DBService.getHistoryEntry(userId, historyId);
-    
-    if (!historyEntry) {
+  } catch (err) {
+
+    return res.status(500).json({
+      success: false,
+      error: {
+        message: "SERVER_ERROR",
+        details: err.flaskData || null
+      }
+    })
+  }
+}
+
+// HISTORY/ ===================================================================================
+
+// SCANS
+exports.getAllScans = async (req, res) => {
+  console.log("get all scans hit")
+
+  const userId = req.params.userId
+    if (userId != req.user.userId) {     
+        res.status(403).json({
+        success:false,
+        message:"UnAuthorized access to profile, Missing userId"
+    })}
+
+  try {
+    const scans = await DBService.getAllScans(userId)
+
+     
+
+    res.status(200).json({
+      success: true,
+      data: scans || [],
+    })
+
+  } catch (err) {
+    res.status(500).json({
+      success:false,
+      message: "server_error",
+      error: {
+        details: err,
+        message:"SERVER_ERROR"
+      }
+    })
+
+  }
+}
+
+
+exports.getScanEntity = async (req, res) => {
+  const { userId, historyId } = req.params;
+
+  if (userId != req.user.userId) {     
+    res.status(403).json({
+      success:false,
+      message:"UnAuthorized access to profile, Missing userId"
+  })}
+
+  if (!historyId) {
+    return res.status(400).json({
+      success: false,
+      message: "missing history id",
+      error: {
+        message: "Scan Id is required"
+      }
+    });
+  }
+
+  try {
+    const historyEntity = await DBService.getScanEntity(userId, historyId);
+
+    if (!historyEntity) {
       return res.status(404).json({
         success: false,
-        message: "History entry not found"
+        message: " the requested species could not be found, 404, Scan entry not found"
       });
     }
 
     return res.status(200).json({
       success: true,
-      message: "History entry retrieved successfully",
-      data: historyEntry
+      message: "Scan entry retrieved successfully",
+      data: historyEntity
     });
 
   } catch (error) {
-    console.error('Error fetching history entry:', error);
+    console.error('Error fetching Scan entry:', error);
     return res.status(500).json({
       success: false,
-      message: "Failed to fetch history entry",
+      message: "Failed to fetch Scan entry",
       error: error.message
     });
   }
 };
+// save to history
+
+exports.saveToScans = async (req, res) => {
+ 
+  const userId = req.params.userId
+    if (userId != req.user.userId) {     
+        res.status(403).json({
+        success:false,
+        message:"UnAuthorized access to profile, Missing userId"
+    })}
+
+  const { disease, imageMetadata, confidence ,remediations} = req.body.scanData;
+
+   
+    console.log("scans userId", userId)
+    if (!disease || !imageMetadata || !confidence ) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid scan details, missing disease or image metadata",
+        error: {
+          message: "Disease and image metadata are required"
+        }
+      });
+    }
+    // object to be saved
+    const scanInfo = {
+      disease,
+      confidence,
+      imageMetadata,
+      remediations: remediations || null
+        }
+
+    try {
+      const savedEntry = await DBService.saveScanEntry(userId,scanInfo);
+      if (savedEntry) {
+        return res.status(201).json({
+      success: true,
+      message: "Scan results saved to DB",
+    });
+  }
+
+  } catch (error) {
+    console.error('Save to Scan error:', error);
+    return res.status(500).json({
+      success: false,
+      error: {
+        message: "SERVER_ERROR"
+      }
+    });
+  }
+};
+//============================== REMEDIATION===============================
+
+exports.getRemediation = async (req, res) => {
+  const disease = req.body.disease;
+  if (!disease) {
+    return res.status(400).json({
+      success: false,
+      message: "Disease name is required",
+      error: {
+        message: "Disease name is required"
+      }
+    });
+  }
+
+  try {
+    const chat_response = await RemediationService.getRemediation(disease);
+
+    return res.status(200).json({
+      success: true,
+      message: "Succesfully retrieved remediation steps",
+      data: {
+        disease: disease,
+        remediations: chat_response
+      }
+    });
+
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: "SERVER_ERROR",
+      error: {
+        message: error.message
+      }
+    });
+  }
+
+
+
+}

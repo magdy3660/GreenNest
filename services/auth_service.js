@@ -1,50 +1,40 @@
-const User = require("../models/user");
-const {
-  sendVerificationEmail,
-  sendPasswordResetEmail,
-  sendPasswordResetConfirmation,
-} = require("./email_service");
-const {
-  generateToken,
-  verifyEmailToken,
-  verifyResetToken,
-  resetUserPassword,
-  hashPassword,
-  comparePassword,
-} = require("./token_service");
 
-class UserService {
+const User = require("../models/user");
+const EmailService = require("./email_service");
+const JWT = require("./jwt_service")
+const bcrypt = require("bcrypt")
+class AuthService {
+
   async registerUser(userData) {
     const { email, password, firstName, lastName } = userData;
 
     // Check if user already exists
     const existingUser = await User.findOne({ email });
+
     if (existingUser) {
-      const error = new Error("User already exists");
-      error.status = 409; // Conflict
-      throw error;
+      const message = new Error("User already exists");
+      throw message;
     }
 
     try {
       // Create new user
-      const hashedPassword = await hashPassword(password);
+      const hashedPassword = await this.hashPassword(password);
       const user = new User({
         email,
         password: hashedPassword,
-        Name: {
           firstName,
           lastName,
-        },
+        
       });
 
       // Generate verification token and save user
-      const verificationToken = generateToken(user);
-      user.emailVerificationToken = verificationToken;
+      const emailToken = EmailService.generateEmailToken(user);
+      user.emailVerificationToken = emailToken;
       user.emailVerificationExpires = Date.now() + 24 * 60 * 60 * 1000; // 24 hours
       await user.save();
 
       // Send verification email
-      await sendVerificationEmail(user.email, verificationToken);
+      await EmailService.sendVerificationEmail(user.email, emailToken);
 
       return {
         id: user._id,
@@ -61,27 +51,12 @@ class UserService {
     }
   }
 
-  async verifyEmail(token) {
-    try {
-      const user = await verifyEmailToken(token);
-      if (!user) {
-        const error = new Error("Invalid or expired verification token");
-        error.status = 400;
-        throw error;
-      }
-      return user;
-    } catch (error) {
-      console.error("Error in verifyEmail:", error);
-      if (!error.status) {
-        error.status = 500;
-      }
-      throw error;
-    }
-  }
+  
 
   async loginUser(email, password) {
     try {
       const user = await User.findOne({ email });
+
       if (!user) {
         const error = new Error("Invalid credentials");
         error.status = 401;
@@ -94,17 +69,17 @@ class UserService {
         throw error;
       }
 
-      const isMatch = await comparePassword(password, user.password);
+      const isMatch = await this.comparePassword(password, user.password);
+
       if (!isMatch) {
         const error = new Error("Invalid credentials");
         error.status = 401;
         throw error;
       }
-
-      const token = generateToken(user);
+      const jwt = JWT.generateJWT(user)
 
       return {
-        token,
+        jwt,
         user: {
           userId: user._id,
           email: user.email,
@@ -112,6 +87,7 @@ class UserService {
           lastName: user.lastName,
         },
       };
+
     } catch (error) {
       console.error("Error in loginUser:", error);
       if (!error.status) {
@@ -166,6 +142,31 @@ class UserService {
       throw error;
     }
   }
+
+
+// Password operations==========================================================
+
+async resetUserPassword(user, newPassword) {
+  const hashedPassword = await hashPassword(newPassword);
+  user.password = hashedPassword;
+  user.resetPasswordToken = undefined;
+  user.resetPasswordExpires = undefined;
+  
+  await user.save();
+
+  return user;
+};
+
+async hashPassword(password) {
+  const salt = await bcrypt.genSalt(10);
+  return await bcrypt.hash(password, salt);
+};
+
+async comparePassword(inputPassword, hashedPassword){
+  return await bcrypt.compare(inputPassword, hashedPassword);
+};
+
+
 }
 
-module.exports = new UserService();
+module.exports = new AuthService();

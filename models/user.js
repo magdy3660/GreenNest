@@ -15,7 +15,7 @@ const userSchema = new mongoose.Schema({
     required: true,
     minlength: 6,
   },
-  Name: {
+  
     firstName: {
       type: String,
       required: true,
@@ -26,7 +26,7 @@ const userSchema = new mongoose.Schema({
       required: true,
       trim: true,
     },
-  },
+  
   createdAt: {
     type: Date,
     default: Date.now,
@@ -39,7 +39,7 @@ const userSchema = new mongoose.Schema({
   emailVerificationExpires: Date,
   resetPasswordToken: String,
   resetPasswordExpires: Date,
-  photo: {
+  photoPath: {
     type: String,
     default: ""
   }

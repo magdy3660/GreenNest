@@ -22,6 +22,8 @@ uploads/
 # Model files and datasets
 flask_backend/models/datasets/
 flask_backend/models/dataset
+uploads
+
 
 # Logs
 logs/
@@ -30,3 +32,7 @@ logs/
 # System Files
 .DS_Store
 Thumbs.db
+plant_record.mmd
+
+specie_parser/
+specie_parser

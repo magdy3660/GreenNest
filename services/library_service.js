@@ -1,4 +1,4 @@
-const Specie = require("../models/specie");
+const Specie = require("../models/species");
 const mongoose = require("mongoose");
 
 const ITEMS_PER_PAGE = 30;
@@ -17,7 +17,7 @@ class LibraryService {
         .limit(ITEMS_PER_PAGE);
 
         const catalog = species.map(specie => ({
-          id: specie._id,
+          speciesId: specie._id,
           scientific_name: specie.scientific_name,
           image_url: specie.image_url
         }));

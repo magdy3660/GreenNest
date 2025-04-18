@@ -4,7 +4,9 @@ const express = require("express");
 const cors = require("cors");
 const path = require("path");
 const cookieParser = require("cookie-parser");
-const registerAuthenticatedRoutes = require("./routes/authenticatedRoutes");
+
+const registerServiceRoutes = require("./routes/serviceRoutes");
+
 const registerLibraryRoutes = require("./routes/libraryRoutes");
 
 const { mongoConnect } = require("./util/database");
@@ -23,7 +25,7 @@ async function startServer() {
 
     const router = express.Router()
     registerLibraryRoutes(router)
-    registerAuthenticatedRoutes(router)
+    registerServiceRoutes(router)
 
     app.use(router)
     

@@ -1,5 +1,5 @@
-const userService = require("../services/user_service");
-
+const AuthService = require("../services/auth_service");
+const EmailService = require("../services/email_service")
 exports.register = async (req, res) => {
   try {
     if (!req.body || typeof req.body !== "object") {
@@ -25,7 +25,7 @@ exports.register = async (req, res) => {
     }
     console.log("Registration attempt:", { email, firstName, lastName });
 
-    const user = await userService.registerUser({
+    const user = await AuthService.registerUser({
       email,
       password,
       firstName,
@@ -38,16 +38,24 @@ exports.register = async (req, res) => {
         "Registration successful. Please check your email for verification link",
       user,
     });
+
+
   } catch (error) {
+
     console.error("Registration error:", error);
     return res.status(error.status || 500).json({
       success: false,
-      message: error.message || "Registration failed",
+      error: {
+        message: error.message
+      }
     });
   }
 };
 
 exports.verifyEmail = async (req, res) => {
+  console.log("REVIEVED TOKEN ________________________________________-")
+
+  
   try {
     const { token } = req.query;
     if (!token) {
@@ -56,8 +64,8 @@ exports.verifyEmail = async (req, res) => {
         message: "Verification token is required",
       });
     }
-
-    await userService.verifyEmail(token);
+// change to emailservice
+    await EmailService.verifyEmailToken(token);
 
     return res.status(200).json({
       success: true,
@@ -74,7 +82,7 @@ exports.verifyEmail = async (req, res) => {
 
 exports.login = async (req, res) => {
   console.log("login hit")
-  try {
+ 
     if (!req.body || typeof req.body !== "object") {
       return res.status(400).json({
         success: false,
@@ -93,26 +101,29 @@ exports.login = async (req, res) => {
     }
 
     console.log("Login attempt", { email });
+    try {
 
-    const { token, user } = await userService.loginUser(email, password);
+    const { jwt, user } = await AuthService.loginUser(req.body.email, req.body.password);
 
-    // Set token in cookie
-    res.cookie("auth_token", token, {
-      httpOnly: true,
-      maxAge: 24 * 60 * 60 * 1000, // 24 hours
-      sameSite: "lax",
-    });
-
+  
+    const {email, firstName, lastName, userId } = user
+    
     return res.status(200).json({
       success: true,
       message: "Login successful",
-      user,
+      data:{
+        token:jwt,
+        email,
+         firstName,lastName,
+        userId
+      },
     });
   } catch (error) {
+
     console.error("Login error:", error);
     return res.status(error.status || 401).json({
       success: false,
-      message: error.message || "Login failed",
+      error:{message:error.message,}
     });
   }
 };
@@ -126,8 +137,8 @@ exports.logout = async (req, res) => {
       });
     }
 
-    console.log("Logging out user:", req.user.email);
-    res.clearCookie("auth_token");
+    // console.log("Logging out user:", req.user.email);
+    // res.clearHeader("Authorization");
 
     return res.status(200).json({
       success: true,
@@ -137,7 +148,7 @@ exports.logout = async (req, res) => {
     console.error("Logout error:", error);
     return res.status(500).json({
       success: false,
-      message: "Error during logout",
+      error:{message: "Error during logout"},
     });
   }
 };
@@ -147,7 +158,9 @@ exports.getResetPasswordToken = async (req, res) => {
     if (!req.body || typeof req.body !== "object") {
       return res.status(400).json({
         success: false,
-        message: "Invalid request body",
+        error:{
+          message:"Invalid request body"
+        }
       });
     }
 
@@ -155,13 +168,15 @@ exports.getResetPasswordToken = async (req, res) => {
     if (!email) {
       return res.status(400).json({
         success: false,
-        message: "Email is required",
+        error:{
+          message: "Email is required"
+        }
       });
     }
 
     console.log("Password reset request for email:", email);
 
-    await userService.initiatePasswordReset(email);
+    await AuthService.initiatePasswordReset(email);
 
     return res.status(200).json({
       success: true,
@@ -171,7 +186,7 @@ exports.getResetPasswordToken = async (req, res) => {
     console.error("Password reset error:", error);
     return res.status(error.status || 400).json({
       success: false,
-      message: error.message || "Error initiating password reset",
+      error:{message: error.message || "Error initiating password reset"}
     });
   }
 };
@@ -193,7 +208,7 @@ exports.resetPassword = async (req, res) => {
       });
     }
 
-    await userService.resetPassword(token, email, newPassword);
+    await AuthService.resetPassword(token, email, newPassword);
 
     return res.status(200).json({
       success: true,

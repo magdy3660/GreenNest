@@ -48,7 +48,7 @@ const upload = multer({
 module.exports = (req, res, next) => {
   console.log("Received file upload request");
 
-  const uploadMiddleware = upload.single('plantImage');
+  const uploadMiddleware = upload.single('profilePhoto');
   
   uploadMiddleware(req, res, (err) => {
     if (err instanceof multer.MulterError) {

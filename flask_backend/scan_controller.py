@@ -125,16 +125,7 @@ class ScanController:
             return None # Or raise ValueError
             
     def handle_prediction_request(self, filename: str, upload_folder: str):
-        """
-        Handles a prediction request for a given filename.
-        
-        Args:
-            filename: The filename of the image to process
-            upload_folder: The folder where uploads are stored
-            
-        Returns:
-            A tuple containing (response_json, status_code)
-        """
+   
         # --- Validate Input ---
         if not isinstance(filename, str) or not filename:
             self.logger.warning(f"Invalid 'filename' value received: {filename}")
@@ -142,13 +133,9 @@ class ScanController:
             
         self.logger.info(f"Processing prediction request for: {filename}")
         
-        # --- Construct and Validate Image Path ---
         try:
-            # Construct the full path to the image within the shared uploads folder
             image_path = os.path.join(upload_folder, filename)
 
-            # **Security Check 1: Prevent directory traversal**
-            # Ensure the resolved path is still within the intended uploads folder
             abs_upload_folder = os.path.abspath(upload_folder)
             abs_image_path = os.path.abspath(image_path)
 
