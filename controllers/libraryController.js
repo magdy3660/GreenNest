@@ -1,17 +1,16 @@
-const LibraryService = require("../services/library_service");
 const DBservice = require('../services/DB_service');
 
-exports.getAllPlants = async (req, res) => {
+exports.getSpecies = async (req, res) => {
   const page = req.query.page;
   
-  if (!req.params.speciesId) {
-    res.status(400).json({
+  if (!page) {
+    return res.status(400).json({
         success:false,
-        message:"No specieId provided"
+        message:"No page provided"
     })
 }
 
-  const plants = await LibraryService.getSpecies(req.query.page)
+  const plants = await DBservice.getSpecies(page)
   
   res.status(200).json({
   // Data
@@ -31,25 +30,164 @@ exports.getAllPlants = async (req, res) => {
   });
 };
 
-exports.getPlant = async (req, res) => {
-  if (req.params.plantId) {
+exports.getSpeciesEntity = async (req, res) => {
+  const speciesId = req.params.speciesId
+  if (!speciesId) {
+    return res.status(400).json({
+        success:false,
+        message:"No speciesId provided"
+    })
+  }
     try {
-        const plant = await DB_service.getPlant(req.params.plantId, req.user._id)
+        const speciesEntity = await DBservice.getSpeciesEntity(speciesId)
 
-
-        if (!plant) {
-            console.log('Plant not found:', req.params.plantId);
-            return res.status(404).json({ message: "Plant not found" });
+        if (!speciesEntity) {
+            console.log('Plant not found for Plant id:', speciesId);
+            return res.status(404).json({ 
+              message: "species not found",
+            error: {
+              message:"Plant not found in DB"
+            } });
         }
-        console.log('Plant found:', plant._id);
         res.status(200).json({
             success: true,
-            plant: plant
+            data:speciesEntity
         });
     } catch (error) {
         console.error('502 SERVER ERR at plant retrieval', error);
-        res.status(500).json({ message: "Error loading plant details" });
+        res.status(404).json({ 
+            success:false,
+            message: "Error loading species details, species not found",
+             error: {
+                message: "species not found"
+            } });
+    }
+ }
+
+exports.saveSpeciesEntity = async (req, res) => {
+  const speciesId = req.params.specieId
+  const userId = req.params.userId
+  if (req.userId != userId) {
+      res.status(403).json({
+      success:false,
+      message:"UnAuthorized access to favourites, Missing userId"
+      })
+   }
+  if (!speciesId) {
+      res.status(400).json({
+          success:false,
+          message: "bad reqeuest, missing specieId",
+      })
+  }
+  try {
+      const savedPlant = await DBService.saveToFavs(userId, speciesId)
+      
+      }catch(err) {
+          res.status(500).json({
+              success:false,
+              message:"Failed to save favourite speice, server is cooked :("
+          })
+      }
+  }
+  
+
+exports.saveToFavs = async (req, res) => { 
+    console.log("save controlelr hit")
+    const userId = req.params.userId
+    const speciesId = req.body.speciesId
+
+    if (!speciesId) {
+        return res.status(400).json({
+            success:false,
+            message:"No speciesId provided"
+        })
+    }
+    // Modify login here to properly send Fail responses
+   try {
+    await DBservice.saveToFavs(userId, speciesId)
+
+        res.status(201).json({
+            success:true,
+            Message:"Favourite saved successfully",
+            data:{
+                message: "species saved Succesfully"
+            }});
+       
+    } catch (err) {
+        res.status(500).json({
+            success:false,
+            message: err.message,
+            error: {
+                message: "failed to save species"
+            }})
     }
 }
-}
 
+exports.getFavourites = async (req, res) => {
+    const userId = req.params.userId
+    if (userId != req.user.userId) {     
+        res.status(403).json({
+        success:false,
+        message:"UnAuthorized access to favourites, Missing userId"
+    })}
+    
+    try {
+            const favourites = await DBservice.getAllFavs(userId)
+            console.log("returened favs", favourites)
+            res.status(200).json({
+                success:true,
+                message:"Favourites retrieved successfully",
+                data:favourites
+            })
+    
+    } catch (err) {
+        res.status(500).json({
+            success:false,
+            message:"Failed to Retrieve favourite speices, server is cooked :(",
+            error: {
+                message: err.message
+            }
+        })
+     }
+
+    } 
+
+
+    // get single favourite
+    exports.getFavouriteEntity = async (req, res) => {
+
+        const specieId = req.params.specieId
+        if (!specieId) {
+            res.status(400).json({
+                succes:false,
+                message: "No SpecieId provided"
+            })
+        } 
+         // if found show object if status 400 or message, show error or success false, 
+        try {
+            const favouriteEntity = await DBservice.getFavouriteEntity(specieId)
+            console.log(favouriteEntity.favouriteId)
+
+            if (favouriteEntity){
+                res.status(200).json({
+                succes:true,
+                data:favEntry,
+                })
+            }
+            else {
+                res.status(200).json({
+                succes:true,
+                message: "you dont have any saved entries yet... start by saving a specie to favourites!",
+                data:{}
+                })
+
+            }
+
+        } catch(err) {
+            res.status(500).json({
+                succes:false,
+                message: "Something Went wrong... add more logging",
+                })
+
+        }
+    }

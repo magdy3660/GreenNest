@@ -1,88 +1,53 @@
 const jwt = require('jsonwebtoken');
 
-const auth = async (req, res, next) => {
-    console.log("Auth middleware triggered..."); 
-
-    if (!process.env.JWT_SECRET) {
-        console.error('FATAL ERROR: JWT_SECRET is not defined in environment variables.');
-        return res.status(500).json({ 
+exports.auth = async (req, res, next) => {
+    const token = req.header('Authorization')?.replace('Bearer ', '') || req.token; 
+    const userId = req.params.userId;
+    
+    if (!token) {
+        console.log('No token provided. Ensure token is passed in Authorization header or as token parameter');
+        return res.status(401).json({
             success: false,
-            message: 'Internal server configuration error.'
+            message: 'Authentication required: No token provided'
+        });
+    }
+
+    if (!userId) {
+        console.log('No userId provided in URL parameters');
+        return res.status(400).json({
+            success: false,
+            message: 'Missing userId parameter in URL'
         });
     }
 
     try {
-        const token = req.header('Authorization')?.replace('Bearer ', '') || req.token; 
-
-        if (!token) {
-            console.log('No token provided.');
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        
+        if (!decoded || !decoded.userId) {
             return res.status(401).json({
                 success: false,
-                message: 'Authentication required: No token provided.'
+                message: 'Invalid token'
             });
         }
 
-        // 3. Verify the token synchronously
-        let decoded;
-        try {
-            decoded = jwt.verify(token, process.env.JWT_SECRET);
-
-        } catch (err) {
-            console.log('Token verification failed:', err.name, err.message);
-            if (err.name === 'TokenExpiredError') {
-                return res.status(401).json({
-                    success: false,
-                    message: 'Token expired, please login again.'
-                });
-            }
-            if (err.name === 'JsonWebTokenError') {
-                return res.status(401).json({
-                    success: false,
-                    message: 'Invalid token.' 
-                });
-            }
-          
-            return res.status(401).json({
+        req.user = {...decoded};
+        console.log("req.user object returned.", req.user);
+        
+        // Verify userId in URL matches the decoded token's userId
+        if (userId !== decoded.userId) {
+            console.log(`Authorization failed: User ${decoded.userId} tried to access resource ${userId}`);
+            return res.status(403).json({
                 success: false,
-                message: 'Token verification failed.'
+                message: 'Forbidden: You do not have permission to access this resource'
             });
         }
 
-        if (!decoded || typeof decoded.userId !== 'string' || !decoded.userId) {
-            console.log('Invalid token payload:', decoded);
-            return res.status(401).json({
-                success: false,
-                message: 'Invalid token payload.'
-            });
-        }
-        req.user = {...decoded}
-      
-
-       if (req.params.userId) {
-            if (req.userId === req.params.userId) {
-                next();
-            } else {
-                console.log(`Authorization failed: User ${req.userId} tried to access resource ${req.params.userId}.`);
-                
-                return res.status(403).json({
-                    success: false,
-                    message: 'Forbidden: You do not have permission to access this resource.'
-                });
-            }
-        } else {
-          
-             console.log("proceeding")
-             next(); // User is authenticated
-
-        }
-
+        next();
     } catch (error) {
-        console.error('Unexpected error in auth middleware:', error);
-        res.status(500).json({ 
+        console.error('JWT verification failed:', error);
+        return res.status(401).json({
             success: false,
-            message: 'An internal server error occurred during authentication.'
+            message: 'Invalid or expired token'
         });
     }
 };
-
-module.exports = auth;

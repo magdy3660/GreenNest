@@ -236,46 +236,6 @@ const speciesSchema = new mongoose.Schema({
     type: String,
     required: false,
   },
-
-  // Disease Information
-  diseases: {
-    type: [{
-      name: {
-        type: String,
-        required: false,
-      },
-      description: {
-        type: String,
-        required: false,
-      },
-      symptoms: {
-        type: [String],
-        required: false,
-        default: [],
-      },
-      causes: {
-        type: [String],
-        required: false,
-        default: [],
-      },
-      treatment: {
-        type: [String],
-        required: false,
-        default: [],
-      },
-      healthy_images: {
-        type: [String],
-        required: false,
-        default: [],
-      },
-      diseased_images: {
-        type: [String],
-        required: false,
-        default: [],
-      },
-    }],
-    default: [],
-  },
 });
 
 module.exports = mongoose.model("Species", speciesSchema);

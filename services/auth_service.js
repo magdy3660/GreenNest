@@ -1,8 +1,8 @@
 
 const User = require("../models/user");
 const EmailService = require("./email_service");
-const JWT = require("./jwt_service")
 const bcrypt = require("bcrypt")
+const jwt = require("jsonwebtoken")
 class AuthService {
 
   async registerUser(userData) {
@@ -55,7 +55,7 @@ class AuthService {
 
   async loginUser(email, password) {
     try {
-      const user = await User.findOne({ email });
+      let user = await User.findOne({ email });
 
       if (!user) {
         const error = new Error("Invalid credentials");
@@ -76,16 +76,18 @@ class AuthService {
         error.status = 401;
         throw error;
       }
-      const jwt = JWT.generateJWT(user)
+      user = {
+        userId:user._id,
+        email:user.email,
+        firstName:user.firstName,
+        lastName:user.lastName,
+        photo_url:user.photoPath
+      }
+      const jwt = AuthService.generateJWT(user)
 
       return {
         jwt,
-        user: {
-          userId: user._id,
-          email: user.email,
-          firstName: user.firstName,
-          lastName: user.lastName,
-        },
+        user
       };
 
     } catch (error) {
@@ -166,6 +168,20 @@ async comparePassword(inputPassword, hashedPassword){
   return await bcrypt.compare(inputPassword, hashedPassword);
 };
 
+static generateJWT(user) {
+
+  const payload = { 
+    userId: user.userId,
+     email: user.email,
+     firstName: user.firstName,
+     lastName: user.lastName,
+     photoPath: user.photoPath? user.photoPath : null
+    };
+  const secret = process.env.JWT_SECRET
+  const options = { expiresIn: '24h' };
+
+  return jwt.sign(payload, secret, options);  // returns a string
+}
 
 }
 

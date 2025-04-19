@@ -52,8 +52,9 @@ exports.sendForDetection = async (req, res) => {
 
     return res.status(500).json({
       success: false,
+      message: "Flask server unavailable",
       error: {
-        message: "SERVER_ERROR",
+        message: "SERVER_ERROR, AI service unavailable",
         details: err.flaskData || null
       }
     })
@@ -152,7 +153,7 @@ exports.saveToScans = async (req, res) => {
         message:"UnAuthorized access to profile, Missing userId"
     })}
 
-  const { disease, imageMetadata, confidence ,remediations} = req.body.scanData;
+  const { disease, imageMetadata, confidence ,remediations} = req.body;
 
    
     console.log("scans userId", userId)
@@ -179,6 +180,7 @@ exports.saveToScans = async (req, res) => {
         return res.status(201).json({
       success: true,
       message: "Scan results saved to DB",
+      data: {message: "succesfully saved Scan to history"}
     });
   }
 
@@ -199,7 +201,7 @@ exports.getRemediation = async (req, res) => {
   if (!disease) {
     return res.status(400).json({
       success: false,
-      message: "Disease name is required",
+      message: "Disease key is required",
       error: {
         message: "Disease name is required"
       }

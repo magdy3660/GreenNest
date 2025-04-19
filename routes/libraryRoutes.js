@@ -1,22 +1,16 @@
 const libraryController = require("../controllers/libraryController");
-const auth = require("../middlewares/auth");
-const profileController = require("../controllers/profileController");
-const plantController = require("../controllers/plantController");
-
+const auth = require("../middlewares/auth").auth
 
 // TELL FRONTEND TO ADD A CHECK FOR AUTHENTICATION WHEN TRYING TO ADD TO FAVOURITES
 const registerLibraryRoutes = (router) => {
-    router.get("/api/v1/library/species", libraryController.getAllPlants);
-    router.get("/api/v1/library/species/:specieId", libraryController.getPlant);
-   
-   
-   
- router.use("/api/v1/users", auth);   
-        // favourite library species
-  router.get("/api/v1/users/:userId/favourites", profileController.getAllFavs); //all
-  router.get("/api/v1/users/:userId/favourites/:speciesId", profileController.getLibFav); //single
+    router.get("/api/v1/library/species", libraryController.getSpecies);
+    router.get("/api/v1/library/species/:speciesId", libraryController.getSpeciesEntity);
 
-  router.post("/api/v1/users/:userId/favourites/:speciesId", plantController.saveToFavs);  
+    // Protect individual routes instead of using router.use()
+    router.post("/api/v1/library/users/:userId/favourites", auth, libraryController.saveToFavs);
+    router.get("/api/v1/library/users/:userId/favourites", auth, libraryController.getFavourites);
+    
+    router.get("/api/v1/library/users/:userId/favourites/:speciesId", auth, libraryController.getSpeciesEntity);
 }
 
 module.exports = registerLibraryRoutes;   

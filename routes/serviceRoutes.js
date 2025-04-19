@@ -3,7 +3,7 @@ const ScanController = require("../controllers/ScanController");
 const profileController = require("../controllers/profileController");
 const upload2 = require("../middlewares/upload2"); //upload middleware
 const profileUpload = require("../middlewares/profileUpload");
-const auth = require("../middlewares/auth");
+const auth = require("../middlewares/auth").auth
 
 const registerAuthenticatedRoutes = (router) => { 
 
@@ -20,29 +20,28 @@ const registerAuthenticatedRoutes = (router) => {
   router.post("/api/v1/reset-password", authController.resetPassword);
   
   
-  router.use("/api/v1/users", auth);   // Protect all user routes
 
 
     // scans
-  router.post("/api/v1/users/:userId/scans",upload2, ScanController.sendForDetection);   
+  router.post("/api/v1/users/:userId/scans",auth, upload2, ScanController.sendForDetection);   
 
-  router.post("/api/v1/users/:userId/scans/remediations", ScanController.getRemediation);  
+  router.post("/api/v1/users/:userId/scans/remediations",auth, ScanController.getRemediation);  
 
     // user profile
-  router.patch("/api/v1/users/:userId/profile",profileUpload, profileController.updateProfile);
+  router.patch("/api/v1/users/:userId/profile",auth, profileUpload, profileController.updateProfile);
 
-  router.get("/api/v1/users/:userId/profile", profileController.getProfile);
+  router.get("/api/v1/users/:userId/profile", auth, profileController.getProfile);
   router.post("/api/v1/users/:userId/logout", authController.logout); 
 
 
     // histories
-  router.post("/api/v1/users/:userId/histories", ScanController.saveToScans);
-  router.get("/api/v1/users/:userId/histories",ScanController.getAllScans);
-  router.get("/api/v1/users/:userId/histories/:historyId",ScanController.getScanEntity);
+  router.post("/api/v1/users/:userId/histories",auth, ScanController.saveToScans);
+  router.get("/api/v1/users/:userId/histories",auth, ScanController.getAllScans);
+  router.get("/api/v1/users/:userId/histories/:historyId",auth, ScanController.getScanEntity);
 
 
     // DASHBOARD (scans + histories)
-  router.get("/api/v1/users/:userId/dashboard", profileController.getDashboard);  
+  router.get("/api/v1/users/:userId/dashboard", auth,profileController.getDashboard);  
 
 
 
